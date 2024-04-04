@@ -1,0 +1,47 @@
+<!-- registration.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+</head>
+<body>
+    <h2>Registration</h2>
+    
+    <!-- Display form errors -->
+    {% if messages %}
+    <div>
+        <ul class="messages">
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    <li>{{ message }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label for="id_email">Email address:</label>
+            <input type="email" name="email" maxlength="254" id="id_email">
+        </p>
+
+        <p>
+            <label for="id_password">Password:</label>
+            <input type="password" name="password" required id="id_password">
+        </p>
+
+        <p>
+            <label for="id_confirm_password">Confirm password:</label>
+            <input type="password" name="confirm_password" required id="id_confirm_password">
+        </p>
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>
+
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 400px;
+        }
+
+        .otp-verification-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .verify-button {
+            background-color: #f0c14b;
+            color: #111;
+            padding: 10px 0;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .verify-button:hover {
+            background-color: #d4ac0d;
+        }
+
+        .error {
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="otp-verification-box">
+            <h1>OTP Verification</h1>
+            {% if error %}
+            <p class="error">{{ error }}</p>
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <label for="otp">OTP:</label>
+                <input type="text" id="otp" name="otp" required>
+                <button type="submit" class="verify-button">Verify OTP</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
