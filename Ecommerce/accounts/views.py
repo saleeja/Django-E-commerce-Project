@@ -3,15 +3,19 @@ from django.contrib.auth import authenticate, login,logout
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import CustomUser
+from Products.models import Category
 from .forms import RegistrationForm, LoginForm
 from django.contrib import messages
 import random
 import string
 from django.contrib.auth.decorators import login_required
+from django.views import View
+from .forms import RegistrationForm, LoginForm, PasswordResetRequestForm, VerifyOTPForm, SetNewPasswordForm
 
 
 def index(request):
-    return render(request, "index.html")
+    categories = Category.objects.all()
+    return render(request, "index.html" ,{'categories': categories})
 
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
@@ -93,10 +97,8 @@ def user_logout(request):
 def admin_main(request):
     return render(request,"accounts/admin_main.html")
 
-
-
-from django.views import View
-from .forms import RegistrationForm, LoginForm, PasswordResetRequestForm, VerifyOTPForm, SetNewPasswordForm
+def contact(request):
+    return render(request,'contact.html')
 
 
 class PasswordResetRequestView(View):

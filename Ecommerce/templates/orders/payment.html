@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        .payment-method {
+            width: 50%;
+        }
+        .order-summary {
+            width: 40%;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        /* Add additional styling as needed */
+    </style>
+</head>
+<body>
+    <div class="payment-method">
+        <h2>Choose Payment Method</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="radio" id="paypal" name="payment_method" value="paypal">
+            <label for="paypal">PayPal</label><br>
+            <input type="radio" id="credit_card" name="payment_method" value="credit_card">
+            <label for="credit_card">Credit Card</label><br>
+            <input type="radio" id="credit_card" name="payment_method" value="credit_card">
+            <label for="credit_card">Debit Card</label><br>
+            <input type="radio" id="credit_card" name="payment_method" value="credit_card">
+            <label for="credit_card">Cash On Delivery</label><br>
+            <input type="radio" id="credit_card" name="payment_method" value="credit_card">
+            <label for="credit_card">Net Banking</label><br>
+            <!-- Add more payment options as needed -->
+            <button type="submit"><a href="{%url 'place_order'%}">Place Order</a></button>
+        </form>
+    </div>
+    
+    <div class="order-summary">
+        <h2>Order Summary</h2>
+        <table>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.product.price }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>Delivery charge</td>
+                    <td>₹{{ delivery_charge }}</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>₹{{ total_price }}</td>
+                </tr>
+                <tr>
+                    <td>Order Total</td>
+                    <td>₹{{ total_price}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

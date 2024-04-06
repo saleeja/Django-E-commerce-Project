@@ -1,47 +1,99 @@
-<!-- registration.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #ff9900;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #ff6600;
+        }
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h2>Registration</h2>
+    <div class="container">
+        <h2>Create account</h2>
+        
+        <!-- Display form errors -->
+        {% if messages %}
+        <div class="error">
+            <ul>
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <li>{{ message }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
     
-    <!-- Display form errors -->
-    {% if messages %}
-    <div>
-        <ul class="messages">
-            {% for message in messages %}
-                {% if message.tags == 'error' %}
-                    <li>{{ message }}</li>
-                {% endif %}
-            {% endfor %}
-        </ul>
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                <label for="id_email">Email address:</label>
+                <input type="email" name="email" maxlength="254" id="id_email" required>
+            </p>
+    
+            <p>
+                <label for="id_password">Password:</label>
+                <input type="password" name="password" required id="id_password">
+            </p>
+    
+            <p>
+                <label for="id_confirm_password">Confirm password:</label>
+                <input type="password" name="confirm_password" required id="id_confirm_password">
+            </p>
+            <button type="submit">Create your Shopify account</button>
+        </form>
     </div>
-    {% endif %}
-
-    
-    <form method="post">
-        {% csrf_token %}
-        <p>
-            <label for="id_email">Email address:</label>
-            <input type="email" name="email" maxlength="254" id="id_email">
-        </p>
-
-        <p>
-            <label for="id_password">Password:</label>
-            <input type="password" name="password" required id="id_password">
-        </p>
-
-        <p>
-            <label for="id_confirm_password">Confirm password:</label>
-            <input type="password" name="confirm_password" required id="id_confirm_password">
-        </p>
-        <button type="submit">Register</button>
-    </form>
 </body>
 </html>
-
-

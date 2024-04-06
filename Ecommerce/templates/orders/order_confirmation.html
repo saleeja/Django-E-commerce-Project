@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <!-- Add your CSS styling here -->
+</head>
+<body>
+    <div>
+        <h2>Order Placed Successfully!</h2>
+        <p>Thank you for your order. Your order has been successfully placed.</p>
+        <p>A confirmation email will be sent to your email address shortly.</p>
+    </div>
+    <div>
+        <!-- Display the shipping address -->
+        <h3>Shipping Address</h3>
+        <p>{{ shipping_address.full_name }}</p>
+        <p>{{ shipping_address.address_line1 }}</p>
+        <p>{{ shipping_address.address_line2 }}</p>
+        <p>{{ shipping_address.city }}, {{ shipping_address.state }}, {{ shipping_address.postal_code }}</p>
+        <p>{{ shipping_address.country }}</p>
+    </div>
+    <div>
+        <!-- You can add more details here as needed -->
+    </div>
+</body>
+</html>
+
