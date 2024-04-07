@@ -9,6 +9,8 @@ urlpatterns = [
     path('order_confirmation/', order_confirmation, name='order_confirmation'),
     path('payment/',payment, name='payment'),
     path('place_order/',place_order, name='place_order'),
+    path('edit_shipping_address/<int:address_id>/', edit_shipping_address, name='edit_shipping_address'),
+    path('remove_shipping_address/<int:address_id>/', remove_shipping_address, name='remove_shipping_address'),
     
 ]
 

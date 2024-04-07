@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login,logout
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import CustomUser
+from django.core.exceptions import ObjectDoesNotExist
+from .models import CustomUser,ShippingAddress
 from Products.models import Category
 from .forms import RegistrationForm, LoginForm
 from django.contrib import messages
@@ -11,6 +12,7 @@ import string
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from .forms import RegistrationForm, LoginForm, PasswordResetRequestForm, VerifyOTPForm, SetNewPasswordForm
+from .forms import UserProfileForm
 
 
 def index(request):
@@ -170,6 +172,39 @@ class SetNewPasswordView(View):
                 messages.error(request, 'User not found.')
 
         return render(request, 'accounts/set_new_password.html', {'form': form})
+
+@login_required
+def create_or_edit_profile(request):
+    user = request.user
+    try:
+        profile = user.shipping_addresses.first()
+        creating = False
+    except ShippingAddress.DoesNotExist:
+        profile = None
+        creating = True
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = user
+            profile.save()
+            return redirect('profile_detail')  
+    else:
+        form = UserProfileForm(instance=profile) if profile else UserProfileForm()
+    
+    return render(request, 'accounts/edit_profile.html', {'form': form, 'creating': creating})
+
+
+@login_required
+def profile_detail(request):
+    user = request.user
+    try:
+        shipping_address = ShippingAddress.objects.get(user=user)
+    except ObjectDoesNotExist:
+        shipping_address = None
+    
+    return render(request, 'accounts/profile_detail.html', {'user': user, 'shipping_address': shipping_address})
 
 
 

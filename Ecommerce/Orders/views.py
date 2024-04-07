@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from Products.models import Product
+from accounts.models import ShippingAddress
 from django.contrib.auth.decorators import login_required
 from .models import Order,Cart
 from Products.models import Product
@@ -36,24 +36,51 @@ def cart(request):
     return render(request, 'orders/cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 
+
 @login_required
 def checkout(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     
-    if request.method == 'POST':
-        shipping_address_form = ShippingAddressForm(request.POST)
-        if shipping_address_form.is_valid():
-            shipping_address = shipping_address_form.save(commit=False)
-            shipping_address.user = request.user
-            shipping_address.save()
-            order = Order.objects.create(user=request.user, shipping_address=shipping_address)
-            return redirect('payment')
-    else:
-        shipping_address_form = ShippingAddressForm()
+    try:
+        shipping_address = ShippingAddress.objects.get(user=request.user)
+        address_exists = True
+    except ShippingAddress.DoesNotExist:
+        shipping_address = None
+        address_exists = False
 
-    return render(request, 'orders/checkout.html', {'shipping_address_form': shipping_address_form, 'cart_items': cart_items, 'total_price': total_price})
-   
+    if request.method == 'POST':
+        form = ShippingAddressForm(request.POST)
+        if form.is_valid():
+            new_shipping_address = form.save(commit=False)
+            new_shipping_address.user = request.user
+            new_shipping_address.save()
+            return redirect('checkout')  
+    else:
+        form = ShippingAddressForm()
+
+    return render(request, 'orders/checkout.html', {'shipping_address': shipping_address, 'address_exists': address_exists, 'cart_items': cart_items, 'total_price': total_price, 'form': form})
+
+
+@login_required
+def edit_shipping_address(request, address_id):
+    address = get_object_or_404(ShippingAddress, id=address_id, user=request.user)
+    if request.method == 'POST':
+        form = ShippingAddressForm(request.POST, instance=address)
+        if form.is_valid():
+            form.save()
+            return redirect('checkout')
+    else:
+        form = ShippingAddressForm(instance=address)
+    
+    return render(request, 'orders/edit_shipping_address.html', {'form': form, 'address': address})
+
+
+@login_required
+def remove_shipping_address(request, address_id):
+    address = ShippingAddress.objects.get(pk=address_id)
+    address.delete()
+    return redirect('checkout')
 
 def send_order_confirmation_email(email, order):
     subject = 'Order Confirmation'
@@ -76,17 +103,22 @@ def place_order(request):
         return redirect('order_confirmation', order_id=order.id)
     else:
         return redirect('checkout')
-    
-
 
 @login_required
 def payment(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_price = sum(item.product.price * item.quantity for item in cart_items)
+    
+    try:
+        shipping_address = ShippingAddress.objects.get(user=request.user)
+    except ShippingAddress.DoesNotExist:
+        shipping_address = None
+
     order_summary = {
         'items': total_price,
     }
-    return render(request, 'orders/payment.html', {'cart_items': cart_items, 'order_summary': order_summary})
+    return render(request, 'orders/payment.html', {'cart_items': cart_items, 'order_summary': order_summary, 'shipping_address': shipping_address})
+
 
 def place_order(request):
     return redirect('order_confirmation')
@@ -94,3 +126,6 @@ def place_order(request):
 @login_required
 def order_confirmation(request):
     return render(request, 'orders/order_confirmation.html')
+
+
+

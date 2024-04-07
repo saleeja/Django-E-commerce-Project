@@ -25,53 +25,101 @@
 </head>
 
 <body>
-    <!-- Checkout Start -->
+    <div class="container-fluid bg-dark mb-30">
+        <div class="row px-xl-5">
+            <div class="col-lg-9">
+                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
+                    <a href="" class="text-decoration-none d-block d-lg-none">
+                        <span class="h1 text-uppercase text-dark bg-light px-2">Multi</span>
+                        <span class="h1 text-uppercase text-light bg-primary px-2 ml-n1">Shop</span>
+                    </a>
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="index.html" class="nav-item nav-link">Home</a>
+                            <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        </div>
+
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+
+    <!-- Breadcrumb Start -->
     <div class="container-fluid">
         <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="#">Home</a>
+                    <a class="breadcrumb-item text-dark" href="#">Shop</a>
+                    <a class="breadcrumb-item text-dark" href="#">Shopping Cart</a>
+                    <span class="breadcrumb-item active">Checkout</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout Start -->
+    <div class="container-fluid" style="margin-top: 50px;">
+        <div class="row px-xl-5">
             <div class="col-lg-8">
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+                <h5 class="section-title position-relative text-uppercase mb-4"><span class="bg-secondary pr-3">Billing Address</span></h5>
                 <div class="bg-light p-30 mb-5">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>First Name</label>
-                                <input class="form-control" type="text" placeholder="Enter your First name" name="first_name">
-                            </div>
-                            <div class="form-group">
-                                <label>Last Name</label>
-                                <input class="form-control" type="text" placeholder="Enter your last name" name="last_name">
-                            </div>
-                            <div class="form-group">
-                                <label>E-mail</label>
-                                <input class="form-control" type="text" placeholder="example@email.com" name="email">
-                            </div>
-                            <div class="form-group">
-                                <label>Mobile No</label>
-                                <input class="form-control" type="text" placeholder="+123 456 789" name="phone_number">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Address Line 1</label>
-                                <input class="form-control" type="text" placeholder="123 Street" name="address_line1">
-                            </div>
-                            <div class="form-group">
-                                <label>Address Line 2</label>
-                                <input class="form-control" type="text" placeholder="123 Street" name="address_line2">
-                            </div>
-                            <div class="form-group">
-                                <label>City</label>
-                                <input class="form-control" type="text" placeholder="New York" name="city">
-                            </div>
-                            <div class="form-group">
-                                <label>State</label>
-                                <input class="form-control" type="text" placeholder="New York" name="state">
-                            </div>
-                            <div class="form-group">
-                                <label>ZIP Code</label>
-                                <input class="form-control" type="text" placeholder="123" name="postal_code">
-                            </div>
-                        </div>
+                    <div class="col">
+                        {% if address_exists %}
+                            <p>{{ shipping_address.full_name }}</p>
+                            <p>{{ shipping_address.address_line1 }}</p>
+                            <p>{{ shipping_address.phone_number }}</p>
+                            <a href="{% url 'edit_shipping_address' shipping_address.id %}">Edit</a>
+                            <a href="{% url 'remove_shipping_address' shipping_address.id %}">Remove</a>
+                        {% else %}
+                            <!-- Display form to add a new shipping address -->
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input class="form-control" type="text" placeholder="Enter your First name" name="full_name">
+                                    </div>
+            
+                                    <div class="form-group">
+                                        <label>E-mail</label>
+                                        <input class="form-control" type="text" placeholder="Enter your email" name="email" value="{{ user.email }}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mobile No</label>
+                                        <input class="form-control" type="text" placeholder="+123 456 789" name="phone_number">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Address Line 1</label>
+                                        <input class="form-control" type="text" placeholder="123 Street" name="address_line1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Address Line 2</label>
+                                        <input class="form-control" type="text" placeholder="123 Street" name="address_line2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input class="form-control" type="text" placeholder="New York" name="city">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <input class="form-control" type="text" placeholder="New York" name="state">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>ZIP Code</label>
+                                        <input class="form-control" type="text" placeholder="123" name="postal_code">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Address</button>
+                                </div>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>    
@@ -104,8 +152,42 @@
                             <h5>₹{{ total_price|add:10  }}</h5>
                         </div>
                     </div>
-                    <button class="btn btn-block btn-primary font-weight-bold py-3"><a href="{% url 'payment' %}">Continue to payment</a></button>
+                    <a href="{% url 'payment' %}" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Continue to payment</a>
+
                 </div>
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+
+        
+    
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
+
+
+
+
 
                 <!-- <div class="mb-5">
                     <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
@@ -140,31 +222,3 @@
                                 <label class="custom-control-label" for="banktransfer">Cash On Delivery</label>
                             </div>
                         </div> -->
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Checkout End -->
-
-        
-    
-    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
-
-
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-
-    <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
-    <script src="mail/contact.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="{% static 'js/main.js' %}"></script>
-</body>
-
-</html>

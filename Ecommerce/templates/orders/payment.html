@@ -37,12 +37,15 @@
             <label for="credit_card">Cash On Delivery</label><br>
             <input type="radio" id="credit_card" name="payment_method" value="credit_card">
             <label for="credit_card">Net Banking</label><br>
-            <!-- Add more payment options as needed -->
-            <button type="submit"><a href="{%url 'place_order'%}">Place Order</a></button>
+        </form>
+        <form action="{% url 'order_confirmation' %}" method="post">
+            {% csrf_token %}
+            <!-- Payment details (e.g., credit card information) can be included here) -->
+            <button type="submit">Place Order</button>
         </form>
     </div>
     
-    <div class="order-summary">
+    <!-- <div class="order-summary">
         <h2>Order Summary</h2>
         <table>
             <tbody>
@@ -66,6 +69,29 @@
                 </tr>
             </tbody>
         </table>
+    </div> -->
+    <div class="container">
+        <h1>Payment</h1>
+        
+        <!-- Display billing address -->
+        <h2>Billing Address</h2>
+        <p>{{ shipping_address.full_name }}</p>
+        <p>{{ shipping_address.address_line1 }}</p>
+        <p>{{ shipping_address.phone_number }}</p>
+        
+        <!-- Display order summary -->
+        <h2>Order Summary</h2>
+        <ul>
+            {% for item in cart_items %}
+            <li>{{ item.product.title }} - Quantity: {{ item.quantity }} - Price: ₹{{ item.product.price }}</li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Display total price -->
+        <h3>Total Price: ₹{{ order_summary.items }}</h3>
+        
     </div>
 </body>
 </html>
+
+

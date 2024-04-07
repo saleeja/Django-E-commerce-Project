@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser
+from .models import CustomUser,ShippingAddress
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -49,3 +49,9 @@ class SetNewPasswordForm(forms.Form):
     #     if password and confirm_password and password != confirm_password:
     #         raise forms.ValidationError("Passwords do not match.")
     #     return confirm_password
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = ['full_name',  'phone_number','address_line1', 'address_line2', 'city', 'state', 'postal_code']

@@ -47,3 +47,28 @@ def product_list_by_category(request, category_slug):
     category = get_object_or_404(Category, slug=category_slug)
     products = Product.objects.filter(category=category)
     return render(request, 'products/product_list.html', {'category': category, 'products': products})
+
+
+
+def product_search(request):
+    query = request.GET.get('query')
+    category = request.GET.get('category')
+    max_price = request.GET.get('max_price')
+
+    products = Product.objects.all()
+
+    if query:
+        products = products.filter(title__icontains=query)
+
+    if category:
+        products = products.filter(category__name__icontains=category)
+
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    context = {
+        'products': products
+    }
+    return render(request, 'products/product_search_results.html', context)
+
+
