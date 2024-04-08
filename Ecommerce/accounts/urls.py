@@ -14,4 +14,6 @@ urlpatterns = [
     path('set-new-password/', views.SetNewPasswordView.as_view(), name='set_new_password'),  
     path('profile/edit/', views.create_or_edit_profile, name='create_or_edit_profile'),
     path('profile/detail/', views.profile_detail, name='profile_detail'),
+    # path('create-review/', views.create_review, name='create_review'),
+    # path('view-reviews/', views.view_reviews, name='view_reviews'),
 ]

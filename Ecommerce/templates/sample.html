@@ -87,3 +87,50 @@
     
 </body>
 </html>
+
+<!-- product_detail.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }} Detail</title>
+</head>
+<body>
+    <h1>{{ product.name }}</h1>
+    <p>Description: {{ product.description }}</p>
+
+    <!-- Display existing reviews -->
+    <h2>Reviews</h2>
+    <ul>
+        {% for review in reviews %}
+            <li>
+                <p>Rating: {{ review.rating }}</p>
+                <p>Comment: {{ review.comment }}</p>
+                {% if review.photo_or_video %}
+                    <img src="{{ review.photo_or_video.url }}" alt="Review Photo/Video">
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No reviews yet.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Create a new review form -->
+    <h2>Create Review</h2>
+    <form method="post" enctype="multipart/form-data" action="{% url 'product_detail' product_id=product.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Review</button>
+    </form>
+
+</body>
+</html>
+
+<div class="text-primary mb-2">
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star-half-alt"></i>
+    <i class="far fa-star"></i>
+</div>

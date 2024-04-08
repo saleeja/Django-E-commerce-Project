@@ -47,11 +47,19 @@ class ShippingAddress(models.Model):
 
         super().save(*args, **kwargs)  
 
-# from products.models import Product
+from Products.models import Product
 
-# class Review(models.Model):
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
-#     comment = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
+class Review(models.Model):
+    RATING=(
+        (1,'1'),
+        (2,'2'),
+        (3,'3'),
+        (4,'4'),
+        (5,'5'),
+        )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    photo_or_video = models.ImageField(upload_to='review_photos/', blank=True, null=True)
+    rating = models.IntegerField(default=0,choices=RATING,max_length=150)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

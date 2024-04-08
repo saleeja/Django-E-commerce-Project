@@ -29,3 +29,8 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class Wishlist(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product)

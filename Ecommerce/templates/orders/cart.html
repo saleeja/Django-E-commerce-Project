@@ -181,6 +181,23 @@
 
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        function increaseQuantity() {
+            var input = document.getElementById('quantity_input');
+            var hiddenInput = document.getElementById('quantity_hidden');
+            input.value = parseInt(input.value) + 1;
+            hiddenInput.value = input.value;
+        }
+    
+        function decreaseQuantity() {
+            var input = document.getElementById('quantity_input');
+            var hiddenInput = document.getElementById('quantity_hidden');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+                hiddenInput.value = input.value;
+            }
+        }
+    </script>
 </body>
 
 </html>

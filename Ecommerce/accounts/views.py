@@ -3,9 +3,9 @@ from django.contrib.auth import authenticate, login,logout
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from .models import CustomUser,ShippingAddress
-from Products.models import Category
-from .forms import RegistrationForm, LoginForm
+from .models import CustomUser,ShippingAddress,Review
+from Products.models import Category,Subcategory
+from .forms import RegistrationForm, LoginForm,ReviewForm
 from django.contrib import messages
 import random
 import string
@@ -16,7 +16,7 @@ from .forms import UserProfileForm
 
 
 def index(request):
-    categories = Category.objects.all()
+    categories = Subcategory.objects.all()
     return render(request, "index.html" ,{'categories': categories})
 
 def generate_otp():
@@ -205,8 +205,6 @@ def profile_detail(request):
         shipping_address = None
     
     return render(request, 'accounts/profile_detail.html', {'user': user, 'shipping_address': shipping_address})
-
-
 
 
 

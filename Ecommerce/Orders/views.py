@@ -9,15 +9,41 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Product, Cart
+from .forms import AddToCartForm
 
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    cart, created = Cart.objects.get_or_create(user=request.user, product=product)
-    if not created:
-        cart.quantity += 1
-        cart.save()
-    return redirect('cart')
+    if request.method == 'POST':
+        form = AddToCartForm(request.POST)
+        if form.is_valid():
+            quantity = form.cleaned_data['quantity']
+            # Check if the product is already in the cart for the current user
+            cart, created = Cart.objects.get_or_create(user=request.user, product=product)
+            if created:
+                # If the product is not in the cart, create a new entry
+                cart.quantity = quantity
+                cart.save()
+            else:
+                # If the product is already in the cart, update the quantity
+                cart.quantity += quantity
+                cart.save()
+            return redirect('cart')
+    else:
+        form = AddToCartForm()
+    return render(request, 'orders/cart.html', {'product': product, 'form': form})
+
+
+# @login_required
+# def add_to_cart(request, product_id):
+#     product = get_object_or_404(Product, pk=product_id)
+#     cart, created = Cart.objects.get_or_create(user=request.user, product=product)
+#     if not created:
+#         cart.quantity += 1
+#         cart.save()
+#     return redirect('cart')
 
 
 @login_required
@@ -129,3 +155,40 @@ def order_confirmation(request):
 
 
 
+from django.shortcuts import render, redirect
+from .models import Product, Wishlist
+
+from django.shortcuts import render, redirect
+from .models import Product, Wishlist
+
+def add_to_wishlist(request, product_id):
+    # Assuming you have a Product model
+    product = Product.objects.get(pk=product_id)
+    
+    # Assuming you have a Wishlist model and the user is logged in
+    if request.user.is_authenticated:
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+        wishlist.products.add(product)
+        wishlist.save()
+        # Optionally, you may want to redirect the user to a different page after adding to the wishlist
+        return redirect('wishlist')
+    else:
+        # Handle the case when the user is not authenticated (e.g., redirect to login page)
+        return redirect('login_page')
+
+def remove_from_wishlist(request, product_id):
+    if request.user.is_authenticated:
+        product = Product.objects.get(pk=product_id)
+        wishlist = Wishlist.objects.get(user=request.user)
+        wishlist.products.remove(product)
+        return redirect('wishlist')
+    else:
+        return redirect('login')  # Redirect to login page if user is not authenticated
+
+def wishlist(request):
+    if request.user.is_authenticated:
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+        return render(request, 'orders/wishlist.html', {'wishlist': wishlist})
+    else:
+        return redirect('login')  # Redirect to login page if user is not authenticated
+ # Redirect to login page if user is not authenticated

@@ -11,7 +11,9 @@ urlpatterns = [
     path('place_order/',place_order, name='place_order'),
     path('edit_shipping_address/<int:address_id>/', edit_shipping_address, name='edit_shipping_address'),
     path('remove_shipping_address/<int:address_id>/', remove_shipping_address, name='remove_shipping_address'),
-    
+    path('add_to_wishlist/<int:product_id>/', add_to_wishlist, name='add_to_wishlist'),
+    path('remove_from_wishlist/<int:product_id>/', remove_from_wishlist, name='remove_from_wishlist'),
+    path('wishlist/', wishlist, name='wishlist'),
 ]
 
 

@@ -98,7 +98,7 @@
                                 </div>
                                 
                                 <div class="col-auto">
-                                    <a href="#" class="btn px-2">
+                                    <a href="{% url 'wishlist' %}" class="btn px-2">
                                         <div class="text-center">
                                             <i class="fas fa-heart text-primary"></i>
                                             <div>Favorite</div>
@@ -297,8 +297,13 @@
                                 <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                                     <div class="product-item bg-light mb-4">
                                         <div class="d-flex justify-content-end">
-                                            <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
+                                            <a id="wishlist-btn" class="btn btn-outline-dark btn-square" href="{% url 'add_to_wishlist' product.id %}">
+                                                <i id="heart-icon" class="far fa-heart" style="color: red;"></i>
+                                            </a>
                                         </div>
+                                        
+                                        
+                                        
 
                                         <div class="product-img position-relative overflow-hidden">
                                             <a href="{% url 'product_detail' product_id=product.id %}">
@@ -439,6 +444,36 @@
 
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js'%}"></script>
+  
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const wishlistBtn = document.getElementById("wishlist-btn");
+            const heartIcon = document.getElementById("heart-icon");
+    
+            // Set initial color and border
+            heartIcon.style.color = "yellow"; // Set heart icon color to yellow
+            wishlistBtn.style.borderColor = "black"; // Set button border color to black
+    
+            wishlistBtn.addEventListener("click", function(event) {
+                event.preventDefault(); // Prevent the default action of following the href link
+    
+                // Toggle color of the heart icon
+                if (heartIcon.classList.contains("far")) {
+                    heartIcon.classList.remove("far");
+                    heartIcon.classList.add("fas");
+                    heartIcon.style.color = "yellow"; // Change color to yellow
+                    wishlistBtn.style.borderColor = "black"; // Set button border color to black
+                } else {
+                    heartIcon.classList.remove("fas");
+                    heartIcon.classList.add("far");
+                    heartIcon.style.color = "yellow"; // Reset color to yellow
+                    wishlistBtn.style.borderColor = "black"; // Set button border color to black
+                }
+            });
+        });
+    </script>
+    
+    
 </body>
 
 </html>

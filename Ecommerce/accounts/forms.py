@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser,ShippingAddress
+from .models import CustomUser,ShippingAddress,Review
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -55,3 +55,9 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = ShippingAddress
         fields = ['full_name',  'phone_number','address_line1', 'address_line2', 'city', 'state', 'postal_code']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['photo_or_video', 'rating', 'comment']

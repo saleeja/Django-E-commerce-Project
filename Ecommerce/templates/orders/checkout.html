@@ -74,8 +74,9 @@
                             <p>{{ shipping_address.full_name }}</p>
                             <p>{{ shipping_address.address_line1 }}</p>
                             <p>{{ shipping_address.phone_number }}</p>
-                            <a href="{% url 'edit_shipping_address' shipping_address.id %}">Edit</a>
-                            <a href="{% url 'remove_shipping_address' shipping_address.id %}">Remove</a>
+                            <a href="{% url 'edit_shipping_address' shipping_address.id %}" style="display: inline-block; background-color:#f4d55a; color: black; padding: 10px 20px; text-decoration: none;">Edit</a>
+                            <a href="{% url 'remove_shipping_address' shipping_address.id %}" style="display: inline-block; background-color: #f4d55a; color: black; padding: 10px 20px; text-decoration: none;">Remove</a>
+                            
                         {% else %}
                             <!-- Display form to add a new shipping address -->
                             <form method="post">
