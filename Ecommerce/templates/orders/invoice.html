@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        /* Your CSS styles for the invoice go here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .invoice-header {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .invoice-header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .invoice-info {
+            margin-bottom: 20px;
+        }
+        .invoice-info p {
+            margin: 0;
+        }
+        .invoice-details {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .invoice-details h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .invoice-item {
+            margin-bottom: 10px;
+        }
+        .invoice-item p {
+            margin: 0;
+        }
+        .total-amount {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 50px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="invoice-header">
+            <h1>Invoice</h1>
+        </header>
+        <div class="invoice-info">
+            <p>Invoice Date: {{ order.created_at }}</p>
+            <p>Order ID: {{ order.id }}</p>
+            <p>Bill to / Ship to: {{ order.shipping_address }}</p>
+            <p> {{ order.shipping_address.city }},{{ order.shipping_address.state }},{{ order.shipping_address.postal_code }}</p>
+            <p>Phone Number: {{ order.shipping_address.phone_number}}</p>
+
+
+            <!-- Add more invoice details as needed -->
+        </div>
+        <div class="invoice-details">
+            <h2>Order Details</h2>
+            {% for order_item in order_items %}
+            <div class="invoice-item">
+                <p>Product: {{ order_item.product.title }}</p>
+                <p>Quantity: {{ order_item.quantity }}</p>
+                <p>Price: ₹{{ order_item.price }}</p>
+            </div>
+            {% endfor %}
+            <div class="total-amount">
+                Total Amount: ₹{{ order.total_amount }}
+            </div>
+        </div>
+        <footer class="footer">
+            Thank you for your purchase!
+        </footer>
+    </div>
+</body>
+</html>

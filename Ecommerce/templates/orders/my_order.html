@@ -196,7 +196,7 @@ p {
                             <span class="status-label" style="color: blue;">{{ order.order_status }}</span>
                         {% endif %}
                     </div>
-                    <h4><a style="text-decoration:none; color: #007bff;" href="" ><button class=" btn-sm">Download Invoice</button></a></h4>
+                    <h4><a style="text-decoration:none; color: #007bff;" href="{% url 'download_invoice' order_id=order.id %}" ><button class=" btn-sm">Download Invoice</button></a></h4>
 
 
                     <div class="track">

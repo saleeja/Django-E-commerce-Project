@@ -3,97 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
+    <title>Create Account</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
         }
+
         .container {
-            max-width: 500px;
-            margin: 50px auto;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            width: 800px;
         }
+
+        .login-box {
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
         h2 {
-            text-align: center;
+            font-size: 1.2rem;
             margin-bottom: 20px;
         }
-        form {
-            padding: 20px;
-            border-top: 1px solid #ddd;
+
+        .input-group {
+            margin-bottom: 20px;
         }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
+
+        .input-group label {
+            font-size: 0.9rem;
+            color: #555;
         }
-        input[type="email"],
-        input[type="password"] {
+
+        .input-group input {
             width: 100%;
             padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
+
         button[type="submit"] {
-            background-color: #ff9900;
-            color: #fff;
+            background-color: #f0c14b;
+            color: #111;
+            padding: 15px 0;
+            width: 100%;
             border: none;
-            padding: 10px 20px;
-            border-radius: 3px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
+
         button[type="submit"]:hover {
-            background-color: #ff6600;
+            background-color: #d4ac0d;
         }
+
         .error {
-            color: red;
+            color: #ff0000;
+            margin-bottom: 10px;
         }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Create account</h2>
-        
-        <!-- Display form errors -->
-        {% if messages %}
-        <div class="error">
-            <ul>
-                {% for message in messages %}
-                    {% if message.tags == 'error' %}
-                        <li>{{ message }}</li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
+        <div class="login-box">
+            <h2>Create Account</h2>
+
+            <!-- Display form errors -->
+            {% if messages %}
+            <div class="error">
+                <ul>
+                    {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                            <li>{{ message }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="id_email">Email address:</label>
+                    <input type="email" name="email" maxlength="254" id="id_email" required>
+                </div>
+    
+                <div class="input-group">
+                    <label for="id_password">Password:</label>
+                    <input type="password" name="password" required id="id_password">
+                </div>
+    
+                <div class="input-group">
+                    <label for="id_confirm_password">Confirm password:</label>
+                    <input type="password" name="confirm_password" required id="id_confirm_password">
+                </div>
+                <button type="submit">Create your Shopify account</button>
+                <p>Already User? <a href="{% url 'login_user' %}">Login</a></p>
+
+            </form>
         </div>
-        {% endif %}
-    
-        <form method="post">
-            {% csrf_token %}
-            <p>
-                <label for="id_email">Email address:</label>
-                <input type="email" name="email" maxlength="254" id="id_email" required>
-            </p>
-    
-            <p>
-                <label for="id_password">Password:</label>
-                <input type="password" name="password" required id="id_password">
-            </p>
-    
-            <p>
-                <label for="id_confirm_password">Confirm password:</label>
-                <input type="password" name="confirm_password" required id="id_confirm_password">
-            </p>
-            <button type="submit">Create your Shopify account</button>
-        </form>
     </div>
 </body>
 </html>
+

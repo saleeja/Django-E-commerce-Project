@@ -283,3 +283,54 @@ def report_issue(request, order_id):
     else:
         form = OrderIssueForm()
     return render(request, 'orders/report_issue.html', {'form': form})
+
+
+# ___________________________________________________________________________________________________________
+
+
+import io
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+
+def render_to_pdf(template_path, context_dict):
+    """
+    Generate a PDF file from a Django template and context data.
+    
+    Args:
+        template_path (str): The path to the template file.
+        context_dict (dict): The context data to be rendered in the template.
+        
+    Returns:
+        HttpResponse: The PDF file as an HTTP response.
+    """
+    # Load template
+    template = get_template(template_path)
+    html = template.render(context_dict)
+
+    # Create PDF
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
+
+    # Check if PDF generation was successful
+    if not pdf.err:
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="generated_pdf.pdf"'
+        return response
+    else:
+        return HttpResponse('Error generating PDF', status=500)
+
+from django.shortcuts import render
+from .models import Order, OrderItem
+
+def download_invoice(request, order_id):
+    order = Order.objects.get(id=order_id)
+    order_items = OrderItem.objects.filter(order=order)
+
+    context = {
+        'order': order,
+        'order_items': order_items,
+    }
+
+    return render_to_pdf('orders/invoice.html', context)
