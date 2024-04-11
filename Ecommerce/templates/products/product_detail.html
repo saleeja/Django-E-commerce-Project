@@ -169,12 +169,23 @@
                     <h3>{{ product.title }}</h3>
                     <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star-half-alt"></small>
-                            <small class="far fa-star"></small>
+                            {% if average_rating >= 4 %}
+                                <span>&#9733;&#9733;&#9733;&#9733;</span><span>&#9734;</span> <!-- 4 full stars + 1 empty star -->
+                            {% elif average_rating >= 3 %}
+                                <span>&#9733;&#9733;&#9733;</span><span>&#9734;&#9734;</span> <!-- 3 full stars + 2 empty stars -->
+                            {% elif average_rating >= 2 %}
+                                <span>&#9733;&#9733;</span><span>&#9734;&#9734;&#9734;</span> <!-- 2 full stars + 3 empty stars -->
+                            {% elif average_rating >= 1 %}
+                                <span>&#9733;</span><span>&#9734;&#9734;&#9734;&#9734;</span> <!-- 1 full star + 4 empty stars -->
+                            {% else %}
+                                <span>&#9734;&#9734;&#9734;&#9734;&#9734;</span> <!-- 0 stars -->
+                            {% endif %}
                         </div>
+                        
+                        
+                        
+                        
+                        
                         <small class="pt-1">Reviews ({% if reviews %}{{ reviews.count }}{% else %}0{% endif %})</small>
                     </div>
                     <h3 class="font-weight-semi-bold mb-4"> ₹{{ product.price}}</h3>
@@ -207,22 +218,30 @@
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
                             <div class="input-group-btn">
-                                <button class="btn btn-primary btn-minus" onclick="decreaseQuantity()">
+                                <button class="btn btn-primary btn-minus" onclick="decreaseQuantity()" {% if not product.is_available %}disabled{% endif %}>
                                     <i class="fa fa-minus"></i>
                                 </button>
                             </div>
-                            <input type="text" id="quantity_input" name="quantity" class="form-control bg-secondary border-0 text-center" value="1">
+                            <input type="text" id="quantity_input" name="quantity" class="form-control bg-secondary border-0 text-center" value="1" {% if not product.is_available %}disabled{% endif %}>
                             <div class="input-group-btn">
-                                <button class="btn btn-primary btn-plus" onclick="increaseQuantity()">
+                                <button class="btn btn-primary btn-plus" onclick="increaseQuantity()" {% if not product.is_available %}disabled{% endif %}>
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
                         </div>
-                        <form method="post" action="{% url 'add_to_cart' product.id %}">
-                            {% csrf_token %}
-                            <input type="hidden" id="quantity_hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
-                        </form>
+                        
+                        {% if product.is_available %}
+                            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" for="id_quantity" id="quantity_hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+                            </form>
+                        {% else %}
+                            <button type="button" class="btn" style="color:red;" disabled><i class="fa fa-exclamation-circle mr-1" style="color:red;"></i> <span style="color:red;">Out of Stock</span></button>
+                        {% endif %}
+
+
+
                     </div>
                     </div>
                 </div>

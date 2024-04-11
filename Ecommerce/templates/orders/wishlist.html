@@ -1,16 +1,32 @@
 {% extends 'base.html' %}
 
-{% block review %}
+{% block content %}
 
 <h1>My Wishlist</h1>
-{% if wishlist.products.all %}
-    <ul>
-    {% for product in wishlist.products.all %}
-        <li>{{ product.title }} - <a href="{% url 'remove_from_wishlist' product.id %}">Remove</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>Your wishlist is empty.</p>
-{% endif %}
+    {% if wishlist.products.all %}
+        <ul>
+            {% for product in wishlist.products.all %}
+                <li>
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                    <h2>{{ product.title }}</h2>
+                    <p>{{ product.description }}</p>
+                    <p>Price: {{ product.price }}</p>
+                    <!-- Add button to remove from wishlist -->
+                    <form method="post" action="{% url 'remove_from_wishlist' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Remove from Wishlist</button>
+                    </form>
+                    <!-- Add button to add to cart -->
+                    <form method="post" action="{% url 'add_to_cart_from_wishlist' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Add to Cart</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Your wishlist is empty.</p>
+    {% endif %}
+
 {% endblock %}
 

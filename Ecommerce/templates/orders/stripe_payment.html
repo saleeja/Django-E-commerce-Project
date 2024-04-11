@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment</title>
+    <!-- Include Stripe.js library -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        /* Container styling */
+        .container {
+            max-width: 500px;
+            margin-left: 520px ;
+            margin-top: 220px;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+
+        }
+
+        /* Heading styling */
+        .heading {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            padding-bottom: 30px;
+        }
+
+        /* Payment form styling */
+        #payment-form {
+            margin-top: 40px;
+        }
+
+        /* Card element styling */
+        #card-element {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+
+        /* Submit button styling */
+        #submit-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Error message styling */
+        #error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 80px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="heading">Credit / Debit Card</h1>
+        
+        <!-- Payment form -->
+        <form id="payment-form" action="{% url 'stripe_payment' %}" method="post">
+            {% csrf_token %}
+            <div id="card-element"></div>
+            <button id="submit-button" type="submit">Pay Now</button>
+        </form>
+        
+
+        <div id="error-message"></div>
+    </div>
+
+    <script>
+        // Set your publishable key
+        var stripe = Stripe(settings.STRIPE_SECRET_KEY);
+
+        // Create an instance of Elements
+        var elements = stripe.elements();
+
+        // Create an instance of the card Element
+        var card = elements.create('card');
+
+        // Add an instance of the card Element into the `card-element` div
+        card.mount('#card-element');
+
+        // Handle form submission
+        // Handle form submission
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    var errorElement = document.getElementById('error-message');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+
+        // Submit token to your server
+        function stripeTokenHandler(token) {
+            // Add token to the form data and submit the form
+            var form = document.getElementById('payment-form');
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'stripeToken');
+            hiddenInput.setAttribute('value', token.id);
+            form.appendChild(hiddenInput);
+            form.submit();
+        }
+    </script>
+</body>
+</html>
+

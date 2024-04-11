@@ -1,20 +1,25 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Product Search Results</title>
 </head>
 <body>
-    {% for product in products %}
-    <div>
-        <h3>{{ product.title }}</h3>
-        <p>Category: {{ product.category }}</p>
-        <p>Price: {{ product.price }}</p>
-        <!-- Add other product details as needed -->
-    </div>
-    {% empty %}
-        <p>No products found.</p>
-    {% endfor %}
+    <h1>{{ word }}</h1>
 
+    {% if products %}
+        <ul>
+            {% for product in products %}
+                <li>{{ product.name }}</li>
+                <!-- You can add more details about the product here -->
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No products found matching your search.</p>
+    {% endif %}
+
+    <p>Products in cart: {{ product_count_in_cart }}</p>
+    <!-- You can add more HTML elements or JavaScript here as needed -->
 </body>
 </html>

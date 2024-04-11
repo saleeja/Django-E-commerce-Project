@@ -1,29 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <!-- Add your CSS styling here -->
-</head>
-<body>
-    <div>
-        <h2>Order Placed Successfully!</h2>
-        <p>Thank you for your order. Your order has been successfully placed.</p>
-        <p>A confirmation email will be sent to your email address shortly.</p>
-    </div>
-    <div>
-        <!-- Display the shipping address -->
-        <h3>Shipping Address</h3>
-        <p>{{ shipping_address.full_name }}</p>
-        <p>{{ shipping_address.address_line1 }}</p>
-        <p>{{ shipping_address.address_line2 }}</p>
-        <p>{{ shipping_address.city }}, {{ shipping_address.state }}, {{ shipping_address.postal_code }}</p>
-        <p>{{ shipping_address.country }}</p>
-    </div>
-    <div>
-        <!-- You can add more details here as needed -->
-    </div>
-</body>
-</html>
+{% extends 'base.html' %}
 
+{% block content %}
+            
+<body style="font-family: Arial, sans-serif; background-color: #f8f9fa; color: #343a40; margin: 0; padding: 0;">
+    <div style="max-width: 800px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <h1 style="color: #28a745; text-align: center;">Order Placed, Thank You!</h1>
+        {% for order_item in order.orderitem_set.all %}
+            <p>{{ order_item.product.title }}</p>
+            
+            <!-- Display order items -->
+            <ul style="list-style-type: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">
+                        <img src="{{ order_item.product.image.url }}" alt="{{ order_item.product.title }}" style="display: inline-block; vertical-align: middle; margin-right: 10px; width: 80px;">
+                    </li>
+            </ul>
+        {% endfor %}
+        <!-- Display total price -->
+        <p><strong>Total Price:</strong> ₹{{ order.total_amount }}</p>
+
+        <!-- Display shipping address -->
+        <div style="background-color: #f8d7da; padding: 10px; border-radius: 8px; margin-top: 20px;">
+            <p><strong>Shipping to:</strong> {{ order.shipping_address.address_line1 }}, {{ order.shipping_address.city }}, {{ order.shipping_address.state }} - {{ order.shipping_address.postal_code }}</p>
+        </div>
+
+        <!-- Add links to navigate to other pages -->
+        <p><a href="{% url 'my_orders' %}" style="color: #007bff; text-decoration: none; font-weight: bold;">Go to your orders</a></p>
+        <p><a href="{% url 'index' %}" style="color: #007bff; text-decoration: none; font-weight: bold;">Continue shopping</a></p>
+    </div>
+
+{% endblock %}

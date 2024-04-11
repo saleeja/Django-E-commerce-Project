@@ -10,10 +10,11 @@ class Cart(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES = (
-        ('Pending', 'Pending'),
-        ('Processing', 'Processing'),
+        ('Pending','Pending'),
+        ('Order Confirmed','Order Confirmed'),
         ('Shipped', 'Shipped'),
-        ('Delivered', 'Delivered'),
+        ('Out for Delivery','Out for Delivery'),
+        ('Delivered','Delivered'),
         ('Cancelled', 'Cancelled'),
     )
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -23,6 +24,7 @@ class Order(models.Model):
     order_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -34,3 +36,9 @@ class OrderItem(models.Model):
 class Wishlist(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product)
+
+class OrderIssue(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    description = models.TextField()
+    reported_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

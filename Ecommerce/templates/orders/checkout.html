@@ -76,17 +76,16 @@
                             <p>{{ shipping_address.phone_number }}</p>
                             <a href="{% url 'edit_shipping_address' shipping_address.id %}" style="display: inline-block; background-color:#f4d55a; color: black; padding: 10px 20px; text-decoration: none;">Edit</a>
                             <a href="{% url 'remove_shipping_address' shipping_address.id %}" style="display: inline-block; background-color: #f4d55a; color: black; padding: 10px 20px; text-decoration: none;">Remove</a>
-                            
                         {% else %}
                             <!-- Display form to add a new shipping address -->
-                            <form method="post">
+                            <form  method="post">
                                 {% csrf_token %}
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Full Name</label>
                                         <input class="form-control" type="text" placeholder="Enter your First name" name="full_name">
                                     </div>
-            
+                    
                                     <div class="form-group">
                                         <label>E-mail</label>
                                         <input class="form-control" type="text" placeholder="Enter your email" name="email" value="{{ user.email }}" readonly>
@@ -153,10 +152,32 @@
                             <h5>₹{{ total_price|add:10  }}</h5>
                         </div>
                     </div>
-                    <a href="{% url 'payment' %}" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Continue to payment</a>
-
-                </div>
-
+                    <div class="mb-5">
+                        <form id="checkout-form" action="{% url 'checkout' %}" method="post" >
+                            {% csrf_token %}
+                            <h5 class="section-title position-relative text-uppercase mb-3" style="padding-top: 60px;"><span class="bg-secondary pr-3">Payment</span></h5>
+                            <div class="bg-light p-30">
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" name="payment_method" id="paypal" value="stripe">
+                                        <label class="custom-control-label" for="paypal">Stripe</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" name="payment_method" id="directcheck" value="cod">
+                                        <label class="custom-control-label" for="directcheck">Cash on Delivery</label>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" name="payment_method" id="banktransfer" value="banktransfer">
+                                        <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-block btn-primary font-weight-bold py-3" type="submit">Place Order</button>
+                            </div>
+                        </form>
                         
                     </div>
                 </div>
@@ -182,44 +203,26 @@
 
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js' %}"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("checkout-form").addEventListener("submit", function(event) {
+                // Check if any address fields are empty
+                var addressFields = document.querySelectorAll('#shipping-address-form input[type="text"]');
+                var emptyFields = Array.from(addressFields).filter(function(field) {
+                    return field.value.trim() === '';
+                });
+                
+                // If any fields are empty, prevent form submission and show pop-up
+                if (emptyFields.length > 0) {
+                    alert("Please fill in all address fields before proceeding to payment.");
+                    event.preventDefault(); // Prevent form submission
+                }
+            });
+        });
+    </script>
+    
 </body>
 
 </html>
 
-
-
-
-
-                <!-- <div class="mb-5">
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
-                    <div class="bg-light p-30">
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="paypal">
-                                <label class="custom-control-label" for="paypal">PayPal</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="paypal">
-                                <label class="custom-control-label" for="paypal">Credit Card</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="paypal">
-                                <label class="custom-control-label" for="paypal">Debit Card</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="directcheck">
-                                <label class="custom-control-label" for="directcheck">Bank Transfer</label>
-                            </div>
-                        </div>
-                        <div class="form-group mb-4">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="banktransfer">
-                                <label class="custom-control-label" for="banktransfer">Cash On Delivery</label>
-                            </div>
-                        </div> -->

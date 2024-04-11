@@ -60,6 +60,8 @@ class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     photo_or_video = models.ImageField(upload_to='review_photos/', blank=True, null=True)
-    rating = models.IntegerField(default=0,choices=RATING,max_length=150)
+    rating = models.IntegerField(default=0,choices=RATING)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+

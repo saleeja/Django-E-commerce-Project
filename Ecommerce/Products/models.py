@@ -15,6 +15,24 @@ class Subcategory(models.Model):
     def __str__(self):
         return self.name
 
+class Size(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+class Color(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+class Discount(models.Model):
+    discount = models.FloatField(default=0)  
+
+    def __str__(self):
+        return f"{self.product.title} - {self.discount}%"
+      
 class Product(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -23,9 +41,16 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE)
     available_quantity = models.IntegerField()
+    is_available = models.BooleanField(default=True)
+    sizes = models.ManyToManyField(Size, blank=True)
+    colors = models.ManyToManyField(Color, blank=True)
+    discount = models.ManyToManyField(Discount, blank=True)
     priority = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+
 
     def __str__(self):
         return self.title
+

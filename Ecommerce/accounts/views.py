@@ -3,9 +3,9 @@ from django.contrib.auth import authenticate, login,logout
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from .models import CustomUser,ShippingAddress,Review
-from Products.models import Category,Subcategory
-from .forms import RegistrationForm, LoginForm,ReviewForm
+from .models import CustomUser,ShippingAddress
+from Products.models import Subcategory
+from .forms import RegistrationForm, LoginForm
 from django.contrib import messages
 import random
 import string
@@ -13,11 +13,12 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from .forms import RegistrationForm, LoginForm, PasswordResetRequestForm, VerifyOTPForm, SetNewPasswordForm
 from .forms import UserProfileForm
-
+from Themes.models import ThemesSetting
 
 def index(request):
     categories = Subcategory.objects.all()
-    return render(request, "index.html" ,{'categories': categories})
+    themes = ThemesSetting.objects.latest('id')
+    return render(request, "index.html" ,{'categories': categories,'themes':themes})
 
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
@@ -95,9 +96,6 @@ def login_user(request):
 def user_logout(request):
     logout(request)
     return redirect('index')
-
-def admin_main(request):
-    return render(request,"accounts/admin_main.html")
 
 def contact(request):
     return render(request,'contact.html')
@@ -205,10 +203,6 @@ def profile_detail(request):
         shipping_address = None
     
     return render(request, 'accounts/profile_detail.html', {'user': user, 'shipping_address': shipping_address})
-
-
-
-
 
 
 

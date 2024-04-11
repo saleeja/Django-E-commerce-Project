@@ -1,0 +1,34 @@
+<!-- payment_confirm.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+    <!-- Include Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h1>Payment Confirmation</h1>
+    <div id="payment-result"></div>
+    <script>
+        var stripe = Stripe('{{ settings.STRIPE_PUBLIC_KEY }}');
+        // Use client_secret passed from the view to confirm the payment
+        var clientSecret = '{{ client_secret }}';
+        
+        // Use Stripe.js to confirm the payment
+        stripe.confirmCardPayment(clientSecret).then(function(result) {
+            var paymentResultDiv = document.getElementById('payment-result');
+            if (result.error) {
+                // Display error message if payment failed
+                paymentResultDiv.textContent = 'Payment failed: ' + result.error.message;
+            } else {
+                // Display success message if payment succeeded
+                paymentResultDiv.textContent = 'Payment succeeded!';
+                // Redirect to order confirmation page
+                window.location.href = "{% url 'order_confirmation' %}";
+            }
+        });
+    </script>
+</body>
+</html>

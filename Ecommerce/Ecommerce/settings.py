@@ -19,6 +19,8 @@ INSTALLED_APPS = [
     'accounts',
     'Products',
     'Orders',
+    'Themes',
+    'Admin',
 
 
 ]
@@ -96,30 +98,3 @@ USE_I18N = True
 USE_TZ = True
 
 
-# otp verification
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = '64941c4047d48b'
-EMAIL_HOST_PASSWORD = 'aeafd5888df080'
-EMAIL_PORT = '2525'
-EMAIL_USE_TLS = True
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-
-import os
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-AUTH_USER_MODEL = 'accounts.CustomUser'

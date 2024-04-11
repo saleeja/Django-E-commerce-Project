@@ -8,6 +8,8 @@ urlpatterns = [
     path('',include('accounts.urls')),
     path('',include('Products.urls')),
     path('',include('Orders.urls')),
+    path('',include('Admin.urls')),
+
 
 ]
 

@@ -130,7 +130,7 @@
                                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
                                                 {% if user.is_authenticated %}
                                                     <a class="dropdown-item" id="profileGreeting" href="#">Hello, {{ user.username }}</a>
-                                                    <a class="dropdown-item" href="#">Your Orders</a>
+                                                    <a class="dropdown-item" href="{% url 'my_orders' %}">Your Orders</a>
                                                     <a class="dropdown-item" href="{% url 'create_or_edit_profile' %}">Edit Profile</a>
                                                     <a class="dropdown-item" id="logoutLink" href="{% url 'user_logout' %}">Logout</a>
                                                 {% else %}
@@ -145,24 +145,45 @@
                                     
                                 </div>
                                 
-                                <div class="col-auto">
-                                    <a href="#" class="btn px-2">
-                                        <div class="text-center">
-                                            <i class="fas fa-heart text-primary"></i>
-                                            <div>Favorite</div>
-                                        </div>
-                                        <span class="badge text-secondary border border-secondary"></span>
-                                    </a>
-                                </div>
-                                <div class="col-auto">
-                                    <a href="{% url 'cart' %}" class="btn px-2 ml-3">
-                                        <div class="text-center">
-                                            <i class="fas fa-shopping-cart text-primary"></i> <!-- Cart Icon -->
-                                            <div>Cart</div>
-                                        </div>
-                                        <span class="badge text-secondary border border-secondary"></span>
-                                    </a>
-                                </div>
+                                {% if request.user.is_authenticated %}
+                                    <div class="col-auto">
+                                        <a href="#" class="btn px-2">
+                                            <div class="text-center">
+                                                <i class="fas fa-heart text-primary"></i>
+                                                <div>Wishlist</div>
+                                            </div>
+                                            <span class="badge text-secondary border border-secondary"></span>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="{% url 'cart' %}" class="btn px-2 ml-3">
+                                            <div class="text-center">
+                                                <i class="fas fa-shopping-cart text-primary"></i>
+                                                <div>Cart({% if cart %}{{ cart.count }}{% else %}0{% endif %})</div>
+                                            </div>
+                                            <span class="badge text-secondary border border-secondary"></span>
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div class="col-auto">
+                                        <a href="{% url 'login_user' %}" class="btn px-2">
+                                            <div class="text-center">
+                                                <i class="fas fa-heart text-primary"></i>
+                                                <div>Wishlist</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <!-- Optionally, you can add a Register button -->
+                                    <div class="col-auto">
+                                        <a href="{% url 'login_user' %}" class="btn px-2 ml-3">
+                                            <div class="text-center">
+                                                <i class="fas fa-shopping-cart text-primary"></i>
+                                                <div>Cart</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -186,30 +207,30 @@
                     </ol>
                     <div class="carousel-inner">
                         <div class="carousel-item position-relative active mb-30" style="height: 430px;">
-                            <img class="position-absolute w-100 h-100" src="{% static 'img/carousel-1.jpg' %}" style="object-fit: cover;" alt="First slide">
+                            <img class="position-absolute w-100 h-100" src="{{ themes.banner1.url }}" style="object-fit: cover;" alt="First slide">
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Men Fashion</h1>
+                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">{{ themes.caption1 }}</h1>
                                     <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
                                     <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item position-relative mb-30 " style="height: 430px;">
-                            <img class="position-absolute w-100 h-100" src="{% static 'img/carousel-2.jpg' %}" style="object-fit: cover;" alt="Second slide">
+                            <img class="position-absolute w-100 h-100" src="{{ themes.banner2.url }}" style="object-fit: cover;" alt="Second slide">
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Women Fashion</h1>
+                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">{{ themes.caption2 }}</h1>
                                     <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
                                     <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item position-relative" style="height: 430px;">
-                            <img class="position-absolute w-100 h-100" src="{% static 'img/carousel-3.jpg' %}" style="object-fit: cover;" alt="Third slide">
+                            <img class="position-absolute w-100 h-100" src="{{ themes.banner3.url }}" style="object-fit: cover;" alt="Third slide">
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Kids Fashion</h1>
+                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">{{ themes.caption3 }}</h1>
                                     <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
                                     <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
                                 </div>

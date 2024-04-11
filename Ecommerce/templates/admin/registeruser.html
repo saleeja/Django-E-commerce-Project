@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Users</title>
+    <!-- Add any necessary CSS styles or links to external CSS files here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+          .navbar {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: left;
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #555;
+        }
+        /* Style the edit and delete icons */
+        .edit-icon {
+            color: #007bff; /* Blue color for edit icon */
+        }
+        .delete-icon {
+            color: #dc3545; /* Red color for delete icon */
+        }
+        /* Style the table */
+        table {
+            
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #ccc; /* Add border */
+            margin-left: 120px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ccc; /* Add border */
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'admin_main' %}">Home</a>
+        <a href="#">Products</a>
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+    </div>
+    <h1 style="margin-left: 120px;">Customers</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in registered_users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <!-- Edit icon -->
+                    <a href="{% url 'edit_user' user.id %}" style="margin-right: 10px;">
+                        <i class="fas fa-edit edit-icon"></i>
+                    </a>
+                    <!-- Delete icon -->
+                    <form action="{% url 'delete_user' user.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="margin-right: 10px;">
+                            <i class="fas fa-trash delete-icon"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
