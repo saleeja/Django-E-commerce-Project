@@ -10,7 +10,7 @@ class CategoryForm(forms.ModelForm):
 class SubCategoryForm(forms.ModelForm):
     class Meta:
         model = Subcategory
-        fields = ['name','image','category'] 
+        fields = ['name','category','image'] 
 
 
 class SizeForm(forms.ModelForm):
@@ -29,3 +29,12 @@ class DiscountForm(forms.ModelForm):
     class Meta:
         model = Discount
         fields = ['discount']
+
+
+
+from Orders.models import Order
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['total_amount', 'shipping_address', 'payment_method', 'order_status']  

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Detail</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .user-info {
+      margin-bottom: 20px;
+    }
+
+    .user-info p {
+      margin: 5px 0;
+    }
+
+    .shipping-address {
+      margin-bottom: 10px;
+    }
+
+    .shipping-address p {
+      margin: 3px 0;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>User Detail</h1>
+    <div class="user-info">
+      <p><strong>ID:</strong> {{ user.id }}</p>
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+      <!-- Add more user details as needed -->
+    </div>
+
+    <h2>Shipping Addresses</h2>
+    <ul>
+      {% for address in shipping_addresses %}
+        <li class="shipping-address">
+          <p><strong>Full Name:</strong> {{ address.full_name }}</p>
+          <p><strong>Address Line 1:</strong> {{ address.address_line1 }}</p>
+          <p><strong>Address Line 2:</strong> {{ address.address_line2 }}</p>
+          <p><strong>City:</strong> {{ address.city }}</p>
+          <p><strong>State:</strong> {{ address.state }}</p>
+          <p><strong>Postal Code:</strong> {{ address.postal_code }}</p>
+          <p><strong>Country:</strong> India</p>
+          <p><strong>Phone Number:</strong> {{ address.phone_number }}</p>
+          <!-- <p><strong>Default:</strong> {% if address.is_default %}Yes{% else %}No{% endif %}</p> -->
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Link back to registered users list -->
+    <a href="{% url 'registered_users' %}" class="back-link">Back to Registered Users</a>
+  </div>
+</body>
+</html>
+
+

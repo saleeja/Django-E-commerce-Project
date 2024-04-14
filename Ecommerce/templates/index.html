@@ -93,29 +93,52 @@
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
                             <a href="{% url 'index' %}" class="nav-item nav-link active">Home</a>
-                            <a href="shop.html" class="nav-item nav-link">MEN</a>
-                            <a href="detail.html" class="nav-item nav-link">WOMEN</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">MEN</a>
+                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
+                                    <a href="#" class="dropdown-item">T-Shirts</a>
+                                    <a href="#" class="dropdown-item">Casual Shirts</a>
+                                    <a href="#" class="dropdown-item">Formal Shirts</a>
+                                    <a href="#" class="dropdown-item">Ethnic Dresses</a>
+                                    <a href="#" class="dropdown-item">Jeans</a>
+                                    <a href="#" class="dropdown-item">Footwear</a>
+                                </div>
+                            </div>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">WOMEN</a>
+                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
+                                    <a href="#" class="dropdown-item">Ethnic</a>
+                                    <a href="#" class="dropdown-item">Saree</a>
+                                </div>
+                            </div>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">KIDS</a>
                                 <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                    <a href="{% url 'add_to_cart' product_id=1 %}" class="dropdown-item">Shopping Cart</a>
-                                    <a href="checkout.html" class="dropdown-item">Checkout</a>
+                                    <a href="#" class="dropdown-item">Frock</a>
+                                    <a href="#" class="dropdown-item">Jeans</a>
                                 </div>
                             </div>
-                            <a href="{% url 'contact' %}" class="nav-item nav-link">BEAUTY</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">BEAUTY</a>
+                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
+                                    <a href="#" class="dropdown-item">Makeup</a>
+                                    <a href="#" class="dropdown-item">Skincare</a>
+                                </div>
+                            </div>
+                       
                         </div>
                         <div class="col-lg-7 col-9 text-left">
                             <form action="{% url 'product_search' %}" method="GET">
+                                {% csrf_token %}
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search by name, category, or price" name="query">
+                                    <input type="text" class="form-control" placeholder="Search by name, category, or price" name="q">
                                     <div class="input-group-append">
                                         <button type="submit" class="btn btn-primary"> <i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                             </form>
-                            
-                            
                         </div>
+                        
                         <div class="navbar-nav ml-auto py-3 d-none d-lg-block"> 
                             <div class="row justify-content-end">
                                 <div class="col-auto">
@@ -147,7 +170,7 @@
                                 
                                 {% if request.user.is_authenticated %}
                                     <div class="col-auto">
-                                        <a href="#" class="btn px-2">
+                                        <a href="{% url 'wishlist' %}" class="btn px-2">
                                             <div class="text-center">
                                                 <i class="fas fa-heart text-primary"></i>
                                                 <div>Wishlist</div>
@@ -159,9 +182,10 @@
                                         <a href="{% url 'cart' %}" class="btn px-2 ml-3">
                                             <div class="text-center">
                                                 <i class="fas fa-shopping-cart text-primary"></i>
-                                                <div>Cart({% if cart %}{{ cart.count }}{% else %}0{% endif %})</div>
+                                                <span class="badge badge-danger badge-counter">{{ product_count_in_cart }}</span>
+
+                                                <div>Cart</div>
                                             </div>
-                                            <span class="badge text-secondary border border-secondary"></span>
                                         </a>
                                     </div>
                                 {% else %}
@@ -266,7 +290,7 @@
     <div class="container-fluid pt-5">
         <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">SHOP BY CATEGORY</span></h2>
         <div class="row px-xl-5 pb-6" style="display: flex; flex-wrap: wrap;">
-            {% for category in categories %}
+            {% for category in subcategories %}
             <div class="col-lg-1 col-md-4 col-sm-5 pb-2" style="margin-bottom: 20px; margin-right: 45px; margin-left: 15px;">
                 <a class="text-decoration-none" href="{% url 'category_detail' category.id %}">
                     <div class="cat-item d-block align-items-center mb-4" style="width: 150px; height: 150px; overflow: hidden; margin-right: auto; margin-left: auto;">
@@ -887,7 +911,7 @@
                             <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
                             <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
                             <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
-                            <a class="text-secondary" href="#"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                            <a class="text-secondary" href="{% url 'contact' %}"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">

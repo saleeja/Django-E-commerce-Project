@@ -57,18 +57,18 @@
                             <a href="{% url 'contact' %}" class="nav-item nav-link">BEAUTY</a>
                         </div>
                         <div class="col-lg-7 col-9 text-left">
-                            <form action="#">
+                            <form action="{% url 'product_search' %}" method="GET">
+                                {% csrf_token %}
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search for products">
+                                    <input type="text" class="form-control" placeholder="Search by name, category, or price" name="q">
                                     <div class="input-group-append">
-                                        <span class="input-group-text bg-transparent text-primary">
-                                            <i class="fa fa-search"></i>
-                                        </span>
+                                        <button type="submit" class="btn btn-primary"> <i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div class="navbar-nav ml-auto py-3 d-none d-lg-block"> <!-- Adjusted class -->
+                        
+                        <div class="navbar-nav ml-auto py-3 d-none d-lg-block"> 
                             <div class="row justify-content-end">
                                 <div class="col-auto">
                                     <div class="dropdown">
@@ -82,8 +82,8 @@
                                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
                                                 {% if user.is_authenticated %}
                                                     <a class="dropdown-item" id="profileGreeting" href="#">Hello, {{ user.username }}</a>
-                                                    <a class="dropdown-item" href="#">Your Orders</a>
-                                                    <a class="dropdown-item" href="#">Edit Profile</a>
+                                                    <a class="dropdown-item" href="{% url 'my_orders' %}">Your Orders</a>
+                                                    <a class="dropdown-item" href="{% url 'create_or_edit_profile' %}">Edit Profile</a>
                                                     <a class="dropdown-item" id="logoutLink" href="{% url 'user_logout' %}">Logout</a>
                                                 {% else %}
                                                     <a class="dropdown-item">Welcome</a>
@@ -97,24 +97,45 @@
                                     
                                 </div>
                                 
-                                <div class="col-auto">
-                                    <a href="{% url 'wishlist' %}" class="btn px-2">
-                                        <div class="text-center">
-                                            <i class="fas fa-heart text-primary"></i>
-                                            <div>Favorite</div>
-                                        </div>
-                                        <span class="badge text-secondary border border-secondary"></span>
-                                    </a>
-                                </div>
-                                <div class="col-auto">
-                                    <a href="#" class="btn px-2 ml-3">
-                                        <div class="text-center">
-                                            <i class="fas fa-shopping-cart text-primary"></i> <!-- Cart Icon -->
-                                            <div>Cart</div>
-                                        </div>
-                                        <span class="badge text-secondary border border-secondary"></span>
-                                    </a>
-                                </div>
+                                {% if request.user.is_authenticated %}
+                                    <div class="col-auto">
+                                        <a href="{% url 'wishlist' %}" class="btn px-2">
+                                            <div class="text-center">
+                                                <i class="fas fa-heart text-primary"></i>
+                                                <div>Wishlist</div>
+                                            </div>
+                                            <span class="badge text-secondary border border-secondary"></span>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="{% url 'cart' %}" class="btn px-2 ml-3">
+                                            <div class="text-center">
+                                                <i class="fas fa-shopping-cart text-primary"></i>
+                                                <span class="badge badge-danger badge-counter">{{ product_count_in_cart }}</span>
+
+                                                <div>Cart</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div class="col-auto">
+                                        <a href="{% url 'login_user' %}" class="btn px-2">
+                                            <div class="text-center">
+                                                <i class="fas fa-heart text-primary"></i>
+                                                <div>Wishlist</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="{% url 'login_user' %}" class="btn px-2 ml-3">
+                                            <div class="text-center">
+                                                <i class="fas fa-shopping-cart text-primary"></i>
+                                                <div>Cart</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -137,91 +158,6 @@
     <!-- Breadcrumb End -->
 
 
-    <!-- Shop Start -->
-    <div class="container-fluid">
-        <div class="row px-xl-5">
-            <!-- Shop Sidebar Start -->
-            <div class="col-lg-3 col-md-4">
-                <!-- Price Start -->
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">FILTER BY PRICE</span></h5>
-                <div class="bg-light p-4 mb-30">
-                    <form method="get" action="{% url 'product_list' %}">
-                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                            <input type="radio" class="custom-control-input" id="size-all" name="size" value="" checked>
-                            <label class="custom-control-label" for="size-all">All Price</label>
-                            <!-- <span class="badge border font-weight-normal">1000</span> -->
-                        </div>
-
-                        {% for price in prices %}
-                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                            <input type="radio" class="custom-control-input" id="size-{{ price.id }}" name="price" value="{{ price.id }}">
-                            <label class="custom-control-label" for="price-{{ price.id }}">{{ price.name }}</label>
-                            <!-- Replace "1000" with the actual count of products available in this price -->
-                            <span class="badge border font-weight-normal">{{ price.product_set.count }}</span>
-                        </div>
-                        {% endfor %}
-
-                        <!-- <button type="submit">Apply Filters</button> -->
-                    </form>
-                </div>
-
-
-                <!-- Price End -->
-                
-                <!-- Color Start -->
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by color</span></h5>
-                <div class="bg-light p-4 mb-30">
-                    <div class="bg-light p-4 mb-30">
-                        <form method="get" action="{% url 'product_list' %}">
-                            <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                                <input type="radio" class="custom-control-input" id="color-all" name="colors" value="" checked>
-                                <label class="custom-control-label" for="size-all">All Color</label>
-                                <!-- <span class="badge border font-weight-normal">1000</span> -->
-                            </div>
-
-                            {% for color in colors %}
-                            <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                                <input type="radio" class="custom-control-input" id="size-{{ color.id }}" name="color" value="{{ color.id }}">
-                                <label class="custom-control-label" for="color-{{ color.id }}">{{ color.name }}</label>
-                                <!-- Replace "1000" with the actual count of products available in this color -->
-                                <span class="badge border font-weight-normal">{{ color.product_set.count }}</span>
-                            </div>
-                            {% endfor %}
-
-                            <!-- <button type="submit">Apply Filters</button> -->
-                        </form>
-                    </div>
-
-                    
-                </div>
-                <!-- Color End -->
-
-                <!-- Size Start -->
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by size</span></h5>
-                <div class="bg-light p-4 mb-30">
-                    <form method="get" action="{% url 'product_list' %}">
-                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                            <input type="radio" class="custom-control-input" id="size-all" name="size" value="" checked>
-                            <label class="custom-control-label" for="size-all">All Size</label>
-                            <!-- <span class="badge border font-weight-normal">1000</span> -->
-                        </div>
-
-                        {% for size in sizes %}
-                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                            <input type="radio" class="custom-control-input" id="size-{{ size.id }}" name="size" value="{{ size.id }}">
-                            <label class="custom-control-label" for="size-{{ size.id }}">{{ size.name }}</label>
-                            <!-- Replace "1000" with the actual count of products available in this size -->
-                            <span class="badge border font-weight-normal">{{ size.product_set.count }}</span>
-                        </div>
-                        {% endfor %}
-
-                        <!-- <button type="submit">Apply Filters</button> -->
-                    </form>
-                </div>
-
-                <!-- Size End -->
-            </div>
-            <!-- Shop Sidebar End -->
 
 
             <!-- Shop Product Start -->
@@ -250,59 +186,56 @@
                                         <a class="dropdown-item" href="#">30</a>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
                     <div class="container">
-                        <h1>{{ category.name }}</h1> <!-- Display the category name -->
+                        <h1>{{ products.category.name }}</h1> 
                         <div class="row">
                             {% for product in products %}
 
-                            <a href="{% url 'product_detail' product_id=product.id %}"></a>
                                 <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                                     <div class="product-item bg-light mb-4">
                                         <div class="d-flex justify-content-end">
-                                            <a id="wishlist-btn" class="btn btn-outline-dark btn-square" href="{% url 'add_to_wishlist' product.id %}">
+                                            <a id="wishlist-btn" class="btn btn-outline-dark btn-square" href="{% url 'add_to_wishlist' product.id %}" onclick="showCustomAlert('Product added to wishlist!')">
                                                 <i id="heart-icon" class="far fa-heart" style="color: red;"></i>
                                             </a>
                                         </div>
                                         
-                                        
-                                        
-
                                         <div class="product-img position-relative overflow-hidden">
                                             <a href="{% url 'product_detail' product_id=product.id %}">
-                                                <img class="img-fluid w-100" src="{{ product.image.url }}" alt="">
+                                                <img class="img-fluid w-100" src="{{ product.image.url }}" alt="" style=" height: 350px;">
                                             </a> 
-                                            <a href="{% url 'product_detail' product_id=product.id %}"></a>                                             
                                         </div>
                                         <div class="text-center py-4">
                                             <a class="h6 text-decoration-none text-truncate" href="{% url 'product_detail' product_id=product.id %}">{{ product.title }}</a>
-                        <!-- Display the product name -->
                                             <div class="d-flex align-items-center justify-content-center mt-2">
-                                                <h5>{{ product.price }}</h5> <!-- Display the product price -->
+                                                <h5> ₹{{ product.price }}</h5> <!-- Display the product price -->
                                                 <h6 class="text-muted ml-2"><del>{{ product.old_price }}</del></h6> <!-- Display the old price if applicable -->
                                             </div>
                                             <div class="d-flex align-items-center justify-content-center mb-1">
-                                                <!-- Display product ratings and reviews -->
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small>({{ product.reviews }})</small>
+                                                <div class="d-flex mb-3">
+                                                    <div class="text-primary mr-2">
+                                                        <div class="reviews">
+                                                            {% if product.average_rating %}
+                                                                <p style="color: green;">{{ product.average_rating|floatformat:"1" }}&#9733; ({{ product.review_set.count }} reviews)</p>
+                                                            {% else %}
+                                                                <p>0&#9733;({{ product.review_set.count }} reviews)</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>             
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </a>    
-                            
                             {% endfor %}
                         </div>
                     </div>
 
 
-                    <div class="col-12">
+                    <!-- <div class="col-12">
                         <nav>
                           <ul class="pagination justify-content-center">
                             <li class="page-item disabled"><a class="page-link" href="#">Previous</span></a></li>
@@ -312,7 +245,7 @@
                             <li class="page-item"><a class="page-link" href="#">Next</a></li>
                           </ul>
                         </nav>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!-- Shop Product End -->
@@ -409,6 +342,7 @@
 
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js'%}"></script>
+    
   
    
     

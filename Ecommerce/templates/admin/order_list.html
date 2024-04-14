@@ -26,7 +26,6 @@
                 <thead class="thead-light">
                     <tr>
                         <th>Order ID</th>
-                        <th>Product</th>
                         <th>Customer</th>
                         <th>Added Date</th>
                         <th>Total Amount</th>
@@ -41,8 +40,7 @@
                     {% for order in orders %}
                     <tr>
                         <td>{{ order.id }}</td>
-                        <td><img src="{{ order_item.product.image.url }}" alt="{{ order_item.product.title }}" style="max-width: 100px;"></td>
-                        <td>{{ order.user.username }}</td>
+                        <td>{{ order.shipping_address.full_name }}</td>
                         <td>{{ order.user.updated_at }}</td>
                         <td>₹{{ order.total_amount }}</td>
                         <td>{{ order.payment_method }}</td>
@@ -62,17 +60,19 @@
                                 <button class="btn btn-sm btn-primary update-status-btn">Update Status</button>
                             </form>
                         </td>
+                        <!-- Update the "Action" column in your order list template -->
                         <td>
-                            <!-- Edit button with icon -->
-                            <button class="action-btn edit-btn" title="Edit">
+                            <!-- <a href="{% url 'edit_order' order.id %}" class="action-btn edit-btn" title="Edit">
                                 <i class="fas fa-edit"></i>
-                            </button>
-                            <!-- Delete button with icon -->
-                            <button class="action-btn delete-btn" title="Delete">
+                            </a> -->
+                            <a href="{% url 'delete_order' order.id %}" class="action-btn delete-btn" title="Delete">
                                 <i class="fas fa-trash-alt"></i>
-                            </button>
+                            </a>
                         </td>
-                        <td><a href="#" class="btn btn-sm btn-primary">Detail</a></td>
+                        <td>
+                            <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-primary">Detail</a>
+                        </td>
+
                     </tr>
                     {% endfor %}
                 </tbody>

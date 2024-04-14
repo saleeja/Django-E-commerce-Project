@@ -1,0 +1,55 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Order Detail</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th scope="row" style="width: 200px;">Order ID:</th>
+                    <td>{{ order.id }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Customer:</th>
+                    <td>{{ order.shipping_address.full_name }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Added Date:</th>
+                    <td>{{ order.created_at }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Address:</th>
+                    <td>{{ order.shipping_address.address_line1 }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Total Amount:</th>
+                    <td>₹{{ order.total_amount }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Payment Method:</th>
+                    <td>{{ order.payment_method }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Status:</th>
+                    <td>{{ order.order_status }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Products:</th>
+                    <td>
+                        <ul class="list-unstyled">
+                            {% for order_item in order.orderitem_set.all %}
+                                <li>
+                                    <img src="{{ order_item.product.image.url }}" alt="{{ order_item.product.title }}" style="max-width: 100px;">
+                                    <span>{{ order_item.product.title }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <!-- Add other order details as needed -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

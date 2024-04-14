@@ -53,4 +53,9 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        if self.available_quantity < 0:
+            self.available_quantity = 0  # Ensure quantity never goes below zero
+        super().save(*args, **kwargs)
 

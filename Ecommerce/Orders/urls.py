@@ -4,6 +4,7 @@ from .views import *
 urlpatterns = [
     path('add_to_cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
     path('cart/', cart, name='cart'),
+    path('update_cart_quantity/<int:cart_item_id>/<str:action>/', update_cart_quantity, name='update_cart_quantity'),
     path('remove_from_cart/<int:cart_item_id>/', remove_from_cart, name='remove_from_cart'),
     path('checkout/', checkout, name='checkout'),
     path('edit_shipping_address/<int:address_id>/', edit_shipping_address, name='edit_shipping_address'),
@@ -13,6 +14,7 @@ urlpatterns = [
     path('wishlist/', wishlist, name='wishlist'),
     path('add_to_cart_from_wishlist/<int:product_id>/', add_to_cart_from_wishlist, name='add_to_cart_from_wishlist'),
     path('wishlist/', wishlist, name='wishlist'),
+     path('add_to_wishlist_from_cart/<int:product_id>/',add_to_wishlist_from_cart, name='add_to_wishlist_from_cart'),
     path('confirm_order/', confirm_order, name='confirm_order'),
     path('stripe_payment/', stripe_payment, name='stripe_payment'),
     path('order_confirmation/', order_confirmation, name='order_confirmation'),

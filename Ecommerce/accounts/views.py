@@ -14,11 +14,24 @@ from django.views import View
 from .forms import RegistrationForm, LoginForm, PasswordResetRequestForm, VerifyOTPForm, SetNewPasswordForm
 from .forms import UserProfileForm
 from Themes.models import ThemesSetting
+from django.core.exceptions import ObjectDoesNotExist
+from Orders.models import Cart
+from django.db.models import Count
 
 def index(request):
-    categories = Subcategory.objects.all()
-    themes = ThemesSetting.objects.latest('id')
-    return render(request, "index.html" ,{'categories': categories,'themes':themes})
+    subcategories = Subcategory.objects.all()
+    try:
+        themes = ThemesSetting.objects.latest('id')
+    except ObjectDoesNotExist:
+        themes = None
+
+    # Calculate the count of unique products in the user's cart
+    if request.user.is_authenticated:
+        product_count_in_cart = Cart.objects.filter(user=request.user).values('product').distinct().count()
+    else:
+        product_count_in_cart = 0
+
+    return render(request, "index.html", {'subcategories': subcategories, 'themes': themes, 'product_count_in_cart': product_count_in_cart})
 
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
@@ -92,7 +105,7 @@ def login_user(request):
         form = LoginForm()
     return render(request, 'accounts/login.html', {'form': form})
 
-
+@login_required
 def user_logout(request):
     logout(request)
     return redirect('index')

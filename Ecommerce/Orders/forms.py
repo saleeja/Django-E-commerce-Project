@@ -8,7 +8,6 @@ class AddToCartForm(forms.Form):
     quantity = forms.IntegerField(label='Quantity')
 
 
-
 class ShippingAddressForm(forms.ModelForm):
     class Meta:
         model = ShippingAddress

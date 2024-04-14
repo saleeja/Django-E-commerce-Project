@@ -2,31 +2,62 @@
 
 {% block content %}
 
-<h1>My Wishlist</h1>
+<div class="container-fluid pt-5 pb-3">
     {% if wishlist.products.all %}
-        <ul>
-            {% for product in wishlist.products.all %}
-                <li>
-                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
-                    <h2>{{ product.title }}</h2>
-                    <p>{{ product.description }}</p>
-                    <p>Price: {{ product.price }}</p>
-                    <!-- Add button to remove from wishlist -->
-                    <form method="post" action="{% url 'remove_from_wishlist' product.id %}">
-                        {% csrf_token %}
-                        <button type="submit">Remove from Wishlist</button>
-                    </form>
-                    <!-- Add button to add to cart -->
-                    <form method="post" action="{% url 'add_to_cart_from_wishlist' product.id %}">
-                        {% csrf_token %}
-                        <button type="submit">Add to Cart</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
+    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">My Wishlist </span></h2>
+
+    <div class="row px-xl-5">
+        {% for product in wishlist.products.all %}
+
+        <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+            <div class="product-item bg-light mb-4">
+                <form method="post" action="{% url 'remove_from_wishlist' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link" style="font-size: 24px; color: black;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </form>
+                       
+                <div class="product-img position-relative overflow-hidden">
+                    <a href="{% url 'product_detail' product_id=product.id %}">
+                        <img class="img-fluid w-100" src="{{ product.image.url }}" alt="{{ product.title }}" style=" height: 350px;">
+                    </a>
+                </div>
+                <div class="text-center py-4">
+                    <a class="h6 text-decoration-none text-truncate" href="">{{ product.title }}</a>
+                    <div class="d-flex align-items-center justify-content-center mt-2">
+                        <h5>₹{{ product.price }}</h5><h6 class="text-muted ml-2"><del></del></h6>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-end mb-1">
+                        {% if product.available_quantity > 0 %}
+                            <form method="post" action="{% url 'add_to_cart_from_wishlist' product.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-outline-dark btn-square" type="submit"><i class="fa fa-shopping-cart"></i></button>
+                            </form>
+                        {% else %}
+                            <div class="out-of-stock-box">
+                                Out of Stock
+                            </div>
+                        {% endif %}
+                        <small></small>
+                    </div>
+                    
+                </div> 
+            </div>  
+        </div>
+        {% endfor %}    
+        
+    </div>
     {% else %}
-        <p>Your wishlist is empty.</p>
+    <div style="text-align: center;">
+        <h1 style="color: green;">YOUR WISHLIST IS EMPTY</h1>
+        <p>Add items that you like to your wishlist. Review them anytime and easily move them to the bag</p>
+        <div class="d-flex justify-content-center mt-4">
+            <a href="{% url 'index' %}" class="btn btn-primary mr-2">CONTINUE SHOPPING</a>
+        </div>
+    </div>
     {% endif %}
+</div>
 
 {% endblock %}
 

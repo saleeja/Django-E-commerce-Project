@@ -170,9 +170,16 @@ p {
                     <ul class="order-item">
                         <li>
                             <figure class="itemside mb-3">
-                                <div class="aside"><img src="{{ item.product.image.url }}" class="img-sm border"></div>
+                        
+                                <div class="aside">
+                                    {% if item.product.id %}
+                                        <a href="{% url 'product_detail' product_id=item.product.id %}">
+                                            <img src="{{ item.product.image.url }}" class="img-sm border">
+                                        </a>
+                                    {% endif %}
+                                </div>
                                 <figcaption class="info align-self-center">
-                                    <p class="title"><strong>Name:</strong> {{ item.product.title }} <br><strong>Quantity:</strong> {{ item.quantity }}<br><strong>Price:</strong> ₹{{ order.total_amount }}</p> 
+                                    <p class="title"><strong>Name:</strong> {{ item.product.title }} <br><strong>Quantity:</strong> {{ item.quantity }}<br><strong>Price:</strong> ₹{{ item.product.price }}</p> 
                                 </figcaption>
                             </figure>
                         </li>
@@ -211,20 +218,29 @@ p {
                             <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
                             <div class="step"> <span class="icon"> <i class="fa fa-home"></i> </span> <span class="text">Delivered</span> </div>
                         {% elif order.order_status == 'Cancelled' %}
-                            <div class="step" style="color: red;"> <span class="icon"> <i class="fa fa-spinner"></i> </span> <span class="text">Order Pending</span> </div>
-                            <div class="step" style="color: red;"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text"> Order Confirmed</span> </div>
-                            <div class="step" style="color: red;"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
-                            <div class="step" style="color: red;"> <span class="icon"> <i class="fa fa-home"></i> </span> <span class="text">Delivered</span> </div>
+                            <div style="display: inline-block;">
+                                <button style="border: 1px solid red; padding: 20px; width: 1090px; background-color: #fff; cursor: default;">
+                                    <div style="font-weight: bold; color: red;">Cancelled</div>
+                                    <div style="color: black;">as per your request</div>
+                                </button>
+                            </div> 
                         {% elif order.order_status == 'Out for Delivery' %}
                             <div class="step active"> <span class="icon"> <i class="fa fa-spinner"></i> </span> <span class="text">Order Pending</span> </div>
                             <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text"> Order Confirmed</span> </div>
                             <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
                             <div class="step"> <span class="icon"> <i class="fa fa-home"></i> </span> <span class="text">Delivered</span> </div>
                         {% else %}
-                            <div class="step active"> <span class="icon"> <i class="fa fa-spinner"></i> </span> <span class="text">Order Pending</span> </div>
-                            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text"> Order Confirmed</span> </div>
-                            <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
-                            <div class="step active"> <span class="icon"> <i class="fa fa-home"></i> </span> <span class="text">Delivered</span> </div>
+                        <div style="display: inline-block;">
+                            <button style="border: 2px solid green; padding: 35px; width: 1070px; background-color: #fff; cursor: default;">
+                                <div style="font-weight: bold; color: green;">Delivered</div>
+                                <div style="color: black;">{{order.updated_at}}</div>
+                                <form action="{% url 'report_issue' order.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning">Report Issue</button>
+                                </form>
+                            </button>
+                        </div>
+                        
                         {% endif %}
                     </div>
 

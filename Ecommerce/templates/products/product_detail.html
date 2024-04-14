@@ -23,21 +23,13 @@
 <!-- Libraries Stylesheet -->
     <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
-    
-    <!-- Other meta tags and title -->
-    <!-- Include jQuery -->
-    
-   
-    
-
-
-    <!-- Customized Bootstrap Stylesheet -->
     <link href="{% static 'css/style.css'%}" rel="stylesheet">
 </head>
 
 <body>
     <!-- Navbar Start -->
-    <div class="container-fluid bg-dark mb-30 fixed-top">
+       <!-- Navbar Start -->
+       <div class="container-fluid bg-dark mb-30 fixed-top">
         <div class="row px-xl-12">
             <div class="col-lg-12">
                 <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
@@ -63,18 +55,18 @@
                             <a href="{% url 'contact' %}" class="nav-item nav-link">BEAUTY</a>
                         </div>
                         <div class="col-lg-7 col-9 text-left">
-                            <form action="#">
+                            <form action="{% url 'product_search' %}" method="GET">
+                                {% csrf_token %}
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search for products">
+                                    <input type="text" class="form-control" placeholder="Search by name, category, or price" name="q">
                                     <div class="input-group-append">
-                                        <span class="input-group-text bg-transparent text-primary">
-                                            <i class="fa fa-search"></i>
-                                        </span>
+                                        <button type="submit" class="btn btn-primary"> <i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div class="navbar-nav ml-auto py-3 d-none d-lg-block"> <!-- Adjusted class -->
+                        
+                        <div class="navbar-nav ml-auto py-3 d-none d-lg-block"> 
                             <div class="row justify-content-end">
                                 <div class="col-auto">
                                     <div class="dropdown">
@@ -88,8 +80,8 @@
                                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
                                                 {% if user.is_authenticated %}
                                                     <a class="dropdown-item" id="profileGreeting" href="#">Hello, {{ user.username }}</a>
-                                                    <a class="dropdown-item" href="#">Your Orders</a>
-                                                    <a class="dropdown-item" href="#">Edit Profile</a>
+                                                    <a class="dropdown-item" href="{% url 'my_orders' %}">Your Orders</a>
+                                                    <a class="dropdown-item" href="{% url 'create_or_edit_profile' %}">Edit Profile</a>
                                                     <a class="dropdown-item" id="logoutLink" href="{% url 'user_logout' %}">Logout</a>
                                                 {% else %}
                                                     <a class="dropdown-item">Welcome</a>
@@ -103,24 +95,46 @@
                                     
                                 </div>
                                 
-                                <div class="col-auto">
-                                    <a href="#" class="btn px-2">
-                                        <div class="text-center">
-                                            <i class="fas fa-heart text-primary"></i>
-                                            <div>Favorite</div>
-                                        </div>
-                                        <span class="badge text-secondary border border-secondary"></span>
-                                    </a>
-                                </div>
-                                <div class="col-auto">
-                                    <a href="#" class="btn px-2 ml-3">
-                                        <div class="text-center">
-                                            <i class="fas fa-shopping-cart text-primary"></i> <!-- Cart Icon -->
-                                            <div>Cart</div>
-                                        </div>
-                                        <span class="badge text-secondary border border-secondary"></span>
-                                    </a>
-                                </div>
+                                {% if request.user.is_authenticated %}
+                                    <div class="col-auto">
+                                        <a href="{% url 'wishlist' %}" class="btn px-2">
+                                            <div class="text-center">
+                                                <i class="fas fa-heart text-primary"></i>
+                                                <div>Wishlist</div>
+                                            </div>
+                                            <span class="badge text-secondary border border-secondary"></span>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="{% url 'cart' %}" class="btn px-2 ml-3">
+                                            <div class="text-center">
+                                                <i class="fas fa-shopping-cart text-primary"></i>
+                                                <span class="badge badge-danger badge-counter">{{ product_count_in_cart }}</span>
+
+                                                <div>Cart</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div class="col-auto">
+                                        <a href="{% url 'login_user' %}" class="btn px-2">
+                                            <div class="text-center">
+                                                <i class="fas fa-heart text-primary"></i>
+                                                <div>Wishlist</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <!-- Optionally, you can add a Register button -->
+                                    <div class="col-auto">
+                                        <a href="{% url 'login_user' %}" class="btn px-2 ml-3">
+                                            <div class="text-center">
+                                                <i class="fas fa-shopping-cart text-primary"></i>
+                                                <div>Cart</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -154,6 +168,7 @@
                         <div class="carousel-item active">
                             <img class="w-100 h-100" src="{{ product.image.url }}" alt="Image">
                         </div>
+                        
                     </div>
                     <a class="carousel-control-prev" href="#" data-slide="prev">
                         <i class="fa fa-2x fa-angle-left text-dark"></i>
@@ -167,6 +182,10 @@
             <div class="col-lg-7 h-auto mb-30">
                 <div class="h-100 bg-light p-30">
                     <h3>{{ product.title }}</h3>
+                    <div id="alert-box" class="alert alert-success" style="display: none; position: fixed; top: 18%; right: 20px; transform: translateY(-50%); width: 200px; padding: 10px;">
+                        Item added to cart successfully!
+                    </div>
+                     
                     <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
                             {% if average_rating >= 4 %}
@@ -215,35 +234,51 @@
                             </div>
                         </form>
                     </div>
-                    <div class="d-flex align-items-center mb-4 pt-2">
-                        <div class="input-group quantity mr-3" style="width: 130px;">
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-minus" onclick="decreaseQuantity()" {% if not product.is_available %}disabled{% endif %}>
-                                    <i class="fa fa-minus"></i>
-                                </button>
-                            </div>
-                            <input type="text" id="quantity_input" name="quantity" class="form-control bg-secondary border-0 text-center" value="1" {% if not product.is_available %}disabled{% endif %}>
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary btn-plus" onclick="increaseQuantity()" {% if not product.is_available %}disabled{% endif %}>
-                                    <i class="fa fa-plus"></i>
-                                </button>
+                    <div class="d-flex align-items-center mb-2 pt-2">
+                        <div class="d-flex align-items-center mb-2 pt-2">
+                            <div class="input-group quantity mr-3" style="width: 130px;">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-primary btn-minus" onclick="decreaseQuantity()" {% if not product.is_available %}disabled{% endif %}>
+                                        <i class="fa fa-minus" {% if not product.is_available %}disabled{% endif %}></i>
+                                    </button>
+                                </div>
+                                <input type="text" id="quantity_input" name="quantity" class="form-control bg-secondary border-0 text-center" value="1" {% if not product.is_available %}disabled{% endif %}>
+                                <input type="hidden" id="available_quantity" value="{{ product.available_quantity }}">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-primary btn-plus" onclick="increaseQuantity()" {% if not product.is_available %}disabled{% endif %}>
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
-                        {% if product.is_available %}
-                            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                        
+                        
+                        
+                        
+                        {% if product.available_quantity > 0 %}
+                            <form method="post" action="{% url 'add_to_cart' product.id %}" id="add-to-cart-form">
                                 {% csrf_token %}
                                 <input type="hidden" for="id_quantity" id="quantity_hidden" name="quantity" value="1">
                                 <button type="submit" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+                                {% if product.available_quantity < 4 %}
+                                    <span style="color: orange;">Only {{ product.available_quantity }} left!</span>
+                                {% endif %}
+                                <!-- {% if quantity > max_quantity %}
+                                    <span style="color: orange;">{{ product.available_quantity }} Sorry, you can only add up to {max_quantity} units of this product."</span>
+                                {% endif %} -->
                             </form>
                         {% else %}
-                            <button type="button" class="btn" style="color:red;" disabled><i class="fa fa-exclamation-circle mr-1" style="color:red;"></i> <span style="color:red;">Out of Stock</span></button>
+                            {% if not request.user.has_placed_order %}
+                                <button type="button" class="btn" style="color:red;" disabled><i class="fa fa-exclamation-circle mr-1" style="color:red;"></i> <span style="color:red;">Out of Stock</span></button>
+                            {% endif %}
                         {% endif %}
-
-
+                        
 
                     </div>
+                    
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -488,8 +523,13 @@
         function increaseQuantity() {
             var input = document.getElementById('quantity_input');
             var hiddenInput = document.getElementById('quantity_hidden');
-            input.value = parseInt(input.value) + 1;
-            hiddenInput.value = input.value;
+            var currentValue = parseInt(input.value);
+            var availableQuantity = parseInt(document.getElementById('available_quantity').value);
+            // Check if the current value is less than the available quantity
+            if (currentValue < availableQuantity && currentValue < 6) {
+                input.value = currentValue + 1;
+                hiddenInput.value = input.value;
+            }
         }
     
         function decreaseQuantity() {
@@ -501,6 +541,25 @@
             }
         }
     </script>
+    
+    
+    <script>
+        document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
+            // Prevent the default form submission behavior
+           
+            
+            // Display the alert box
+            var alertBox = document.getElementById('alert-box');
+            alertBox.style.display = 'block';
+            
+            // Hide the alert box after 3 seconds
+            setTimeout(function() {
+                alertBox.style.display = 'none';
+            }, 4000); // 3 seconds
+        });
+    </script>
+    
+    
 
 </body>
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from accounts.models import ShippingAddress
+from accounts.models import ShippingAddress,Review
 from django.contrib.auth.decorators import login_required
 from .models import Order,Cart,OrderItem
 from Products.models import Product
@@ -9,31 +9,49 @@ from django.conf import settings
 from .forms import AddToCartForm
 from .models import  Wishlist
 from django.contrib import messages
+import time
 
 
-@login_required
+@login_required(login_url='login_user')
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    
+    max_quantity = 6  
     if request.method == 'POST':
         form = AddToCartForm(request.POST)
         if form.is_valid():
             quantity = form.cleaned_data['quantity']
-            if quantity > product.available_quantity:
-                # If selected quantity exceeds available quantity, display out of stock message
+            if quantity > max_quantity:
+                messages.error(request, f"Sorry, you can only add up to {max_quantity} units of this product.")
+            elif product.available_quantity == 0:
+                messages.error(request, "This product is out of stock.")
+            elif quantity > product.available_quantity:
                 messages.error(request, f"Sorry, only {product.available_quantity} units available.")
+           
             else:
-                # Check if the product is already in the cart for the current user
-                cart, created = Cart.objects.get_or_create(user=request.user, product=product)
-                if created:
-                    cart.quantity = quantity
+                # Store product ID and quantity in session
+                if 'cart' not in request.session:
+                    request.session['cart'] = {}
+                cart = request.session['cart']
+                if str(product_id) in cart:
+                    cart[str(product_id)] += quantity
                 else:
-                    cart.quantity += quantity
-                cart.save()
-                product.available_quantity -= quantity  # Reduce available quantity
-                product.save()
+                    cart[str(product_id)] = quantity
+                request.session['cart'] = cart
+
+                # Check if the product is already in the cart for the current user
+                cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+                if created:
+                    # Ensure the quantity doesn't exceed 6
+                    cart_item.quantity = min(quantity, 6)
+                else:
+                    # Update the quantity, ensuring it doesn't exceed 6
+                    cart_item.quantity = min(cart_item.quantity + quantity, 6)
+                cart_item.save()
+
+                
                 messages.success(request, "Product added to cart successfully.")
-                return redirect('cart')  # Redirect to cart page after adding to cart
+                time.sleep(2)
+                return redirect('cart')  
     else:
         form = AddToCartForm()
 
@@ -42,7 +60,10 @@ def add_to_cart(request, product_id):
         product.is_available = False
         product.save()
 
-    return render(request, 'orders/cart.html', {'product': product, 'form': form})
+    # Count the number of unique products in the user's cart
+    product_count_in_cart = Cart.objects.filter(user=request.user).values('product').distinct().count()
+
+    return render(request, 'orders/cart.html', {'product': product, 'form': form, 'product_count_in_cart': product_count_in_cart, 'cart': request.session.get('cart', {})})
 
 
 @login_required
@@ -51,14 +72,43 @@ def remove_from_cart(request, cart_item_id):
     cart.delete()
     return redirect('cart')
 
-
 @login_required
 def cart(request):
     cart_items = Cart.objects.filter(user=request.user)
+    
     for item in cart_items:
         item.total_price = item.product.price * item.quantity
+        item.save() 
+    
     total_price = sum(item.total_price for item in cart_items)
+    
     return render(request, 'orders/cart.html', {'cart_items': cart_items, 'total_price': total_price})
+
+
+@login_required
+def update_cart_quantity(request, cart_item_id, action):
+    if request.method == 'POST':
+        cart_item = Cart.objects.get(id=cart_item_id)
+
+        if action == 'plus':
+            if cart_item.quantity < cart_item.product.available_quantity:  # Check if adding one more item exceeds the available quantity
+                if cart_item.quantity < 6:  
+                    cart_item.quantity += 1
+                else:
+                    messages.warning(request, "You can only add up to 6 units of this product.")
+            else:
+                messages.warning(request, "The available quantity for this product has been reached.")
+        elif action == 'minus' and cart_item.quantity > 1:
+            cart_item.quantity -= 1
+
+        cart_item.total_price = cart_item.product.price * cart_item.quantity
+        cart_item.save()
+
+        return redirect('cart')
+    else:
+        return redirect('cart')
+
+
 
 @login_required
 def edit_shipping_address(request, address_id):
@@ -102,7 +152,6 @@ def checkout(request):
         address_exists = False
 
     if request.method == 'POST':
-        # Handle the submission of the shipping address form
         form = ShippingAddressForm(request.POST)
         if form.is_valid():
             new_shipping_address = form.save(commit=False)
@@ -142,7 +191,10 @@ def confirm_order(user, cart_items, shipping_address, total_price, payment_metho
             quantity=item.quantity,
             price=item.product.price * item.quantity,
         )
-
+        item.product.available_quantity -= item.quantity
+        item.product.save()
+    order.order_status = 'Order Confirmed'
+    order.save()
     return order
 
 
@@ -186,6 +238,9 @@ def order_confirmation(request):
     return render(request, 'orders/order_confirmation.html', {'order': latest_order})
 
 
+from django.http import HttpResponseRedirect
+
+@login_required(login_url='login_user')
 def add_to_wishlist(request, product_id):
     if request.user.is_authenticated:
         product = get_object_or_404(Product, pk=product_id)
@@ -197,8 +252,10 @@ def add_to_wishlist(request, product_id):
             messages.success(request, "Product added to your wishlist.")
         else:
             messages.info(request, "This product is already in your wishlist.")
-        
-        return redirect('product_detail', product_id=product_id)
+
+        # Get the referring page's URL or redirect to a default page if not available
+        next_page = request.META.get('HTTP_REFERER', 'default_page_url')
+        return HttpResponseRedirect(next_page)
     else:
         return redirect('login_page')
 
@@ -213,12 +270,17 @@ def remove_from_wishlist(request, product_id):
     else:
         return redirect('login_page') 
 
+
 def wishlist(request):
     if request.user.is_authenticated:
         wishlist, created = Wishlist.objects.get_or_create(user=request.user)
-        return render(request, 'orders/wishlist.html', {'wishlist': wishlist})
+        reviews = Review.objects.all()
+        product_count_in_cart = Cart.objects.filter(user=request.user).values('product').distinct().count()
+
+        return render(request, 'orders/wishlist.html', {'wishlist': wishlist,'reviews':reviews,'product_count_in_cart':product_count_in_cart})
     else:
         return redirect('login_page')
+    
 
 def add_to_cart_from_wishlist(request, product_id):
     if request.user.is_authenticated:
@@ -232,16 +294,44 @@ def add_to_cart_from_wishlist(request, product_id):
             messages.success(request, "Product quantity updated in your cart.")
         else:
             messages.success(request, "Product added to your cart.")
+
+        wishlist = Wishlist.objects.get(user=request.user)
+        wishlist.products.remove(product)
+        
         
         return redirect('cart')
     else:
         return redirect('login_page')
 
 
-def my_orders(request):
+@login_required(login_url='login_user')
+def add_to_wishlist_from_cart(request, product_id):
+    if request.user.is_authenticated:
+        product = get_object_or_404(Product, pk=product_id)
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+
+        # Check if the product is already in the wishlist
+        if not wishlist.products.filter(pk=product_id).exists():
+            wishlist.products.add(product)
+            wishlist.save()
+            messages.success(request, "Product added to your wishlist.")
+        else:
+            messages.info(request, "This product is already in your wishlist.")
+
+        # Remove the product from the cart after adding it to the wishlist
+        cart_item = Cart.objects.filter(user=request.user, product=product).first()
+        if cart_item:
+            cart_item.delete()
+            messages.success(request, "Product removed from your cart.")
+        
+        return redirect('cart')
+    else:
+        return redirect('login_page')
+
+
+def my_orders(request,order_id=None):
     user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
     
-    # Prepare data to pass to the template
     data = []
     for order in user_orders:
         products  = OrderItem.objects.filter(order=order).order_by('-id')
@@ -249,8 +339,11 @@ def my_orders(request):
 
     return render(request, "orders/my_order.html", {'data': data})
 
+
+
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
+    
     if request.method == 'POST':
         order.order_status = 'Cancelled'
         order.save()
@@ -262,7 +355,8 @@ def cancel_order(request, order_id):
         sender_email = settings.EMAIL_HOST_USER
         send_mail(subject, message, sender_email, [recipient_email])
 
-        return redirect('order_detail', order_id=order_id)
+        return render(request, 'orders/order_cancelled.html')
+
     return render(request, 'orders/my_order.html', {'order': order})
 
 
@@ -279,7 +373,8 @@ def report_issue(request, order_id):
             issue.order = order
             issue.reported_by = request.user
             issue.save()
-            return redirect('order_detail', order_id=order.id)
+            return render(request, 'orders/report_issue_success.html')
+
     else:
         form = OrderIssueForm()
     return render(request, 'orders/report_issue.html', {'form': form})
@@ -320,9 +415,6 @@ def render_to_pdf(template_path, context_dict):
         return response
     else:
         return HttpResponse('Error generating PDF', status=500)
-
-from django.shortcuts import render
-from .models import Order, OrderItem
 
 def download_invoice(request, order_id):
     order = Order.objects.get(id=order_id)

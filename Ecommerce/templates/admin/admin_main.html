@@ -349,7 +349,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xl font-weight-bold text-uppercase mb-3">
-                        <a href="{% url 'customer' %}" class="text-decoration-none text-dark ">Customers Queries</a>
+                        <a href="{% url 'order_issue' %}" class="text-decoration-none text-dark ">Customers Queries</a>
                       </div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800">2</div>
                       
@@ -403,24 +403,18 @@
                 <div class="card-header py-4 bg-primary d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-light">Customers need help</h6>
                 </div>
+                {% for issue in issue_reports %}
                 <div>
                   <div class="customer-message align-items-center">
                     <a class="font-weight-bold" href="#">
-                      <div class="text-truncate message-title">My order hasn't arrived yet</div>
-                      <div class="small text-gray-500 message-time font-weight-bold">saleejasalimoluzz · 58m</div>
+                      <div class="text-truncate message-title">{{ issue.description }}</div>
+                      <div class="small text-gray-500 message-time font-weight-bold">{{ issue.reported_by }} · {{ issue.created_at }}</div>
                     </a>
                   </div>
-                  <div class="customer-message align-items-center">
-                    <a href="#">
-                      <div class="text-truncate message-title">Please cancel my order
-                      </div>
-                      <div class="small text-gray-500 message-time">saleejasalimoluzz · 58m</div>
-                    </a>
-                  </div>
-                  
+                {% endfor %}
                   
                   <div class="card-footer text-center">
-                    <a class="m-0 small text-primary card-link" href="#">View More <i
+                    <a class="m-0 small text-primary card-link" href="{% url 'order_issue' %}">View More <i
                         class="fas fa-chevron-right"></i></a>
                   </div>
                 </div>
